@@ -217,7 +217,7 @@ class DailySiteReading(models.Model):
     aisle_group = models.ForeignKey(AisleGroup, on_delete=models.CASCADE, null=True, blank=True)
     leg_id = models.CharField(max_length=50, null=True, blank=True)
     unit_consumption = models.FloatField(null=True, blank=True)
-    reading_for = models.DateField(default=datetime.now())
+    reading_for = models.DateField(default=timezone.now)
 
     def __str__(self):
         return str(self.leg_id)
@@ -233,9 +233,9 @@ class AlarmNotifications(models.Model):
     create_DateTime = models.DateTimeField(auto_now=False, auto_now_add=True)
     alarm_priorities = ((0, 'Normal'), (1, 'High'))
     Alarm_priority = models.PositiveIntegerField(choices=alarm_priorities, default=0)
-    actual_created = models.DateTimeField(default=datetime.now())
+    actual_created = models.DateTimeField(default=timezone.now)
     to_do = models.CharField(max_length=200, blank=True, null=True)
-    off_time = models.DateTimeField(default=datetime.now())
+    off_time = models.DateTimeField(default=timezone.now)
     cloud_time = models.DateTimeField(auto_now=False, auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
@@ -357,7 +357,7 @@ class MeterReadings(models.Model):
     reading_of = models.CharField(max_length=100, null=True, blank=True)
     previous_reading_value = models.CharField(max_length=100, null=True, blank=True)
     #cumulative_units = models.PositiveIntegerField(default=0)
-    updated_on = models.DateTimeField(default=datetime.now())
+    updated_on = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return self.reading_of
@@ -371,8 +371,8 @@ class SupplyLoadTimeShare(models.Model):
     sources = ((0, "MAINS SUPPLY"), (1, "DG 1"), (2, "DG 2"), (3, "DG 3"), (4, "DG 4"), (5, "DG 5"))
     power_source = models.PositiveSmallIntegerField(default=0, choices=sources)
     hourly_run_time = models.IntegerField(default=0)
-    reading_from = models.DateTimeField(default=datetime.now())
-    reading_to = models.DateTimeField(default=datetime.now())
+    reading_from = models.DateTimeField(default=timezone.now)
+    reading_to = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.get_power_source_display()

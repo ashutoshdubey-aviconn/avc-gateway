@@ -13,6 +13,8 @@ import os
 import logging
 from decouple import config
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
