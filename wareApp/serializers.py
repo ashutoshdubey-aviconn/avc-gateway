@@ -28,11 +28,11 @@ class LoginSerializer(serializers.Serializer):
             if user:
                 data["user"] = user
             else:
-                print('user authentication fails')
-                msg = 'invalid credentials. try again'
+                print("user authentication fails")
+                msg = "invalid credentials. try again"
                 return exceptions.ValidationError(msg)
         else:
-            print('username & password doesnt exist')
+            print("username & password doesnt exist")
             msg = "invalid data"
             return exceptions.ValidationError(msg)
 
@@ -43,14 +43,29 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "UserType", "first_name", "last_name", "Contact_number"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "UserType",
+            "first_name",
+            "last_name",
+            "Contact_number",
+        ]
 
 
 class UserCustomerInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "Contact_number", "first_name", "last_name"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "Contact_number",
+            "first_name",
+            "last_name",
+        ]
 
 
 class CustomerInfoSerializer(serializers.ModelSerializer):
@@ -75,16 +90,17 @@ class SiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ["site_name",
-                  "total_no_of_blocks",
-                  "total_no_of_aisles",
-                  "location",
-                  "no_of_single_source_meters",
-                  "no_of_dual_source_meters",
-                  "site_manager",
-                  "site_type",
-                  "id", ]
-
+        fields = [
+            "site_name",
+            "total_no_of_blocks",
+            "total_no_of_aisles",
+            "location",
+            "no_of_single_source_meters",
+            "no_of_dual_source_meters",
+            "site_manager",
+            "site_type",
+            "id",
+        ]
 
 
 # class ParticularCustomerInfoSerializer(serializers.ModelSerializer):

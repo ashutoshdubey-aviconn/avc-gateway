@@ -13,15 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from wareApp.tasks import mqtt_client1, mqtt_client2
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 ]
 
-#mqtt_client1.apply_async(queue="queue1")
-#mqtt_client1.delay()
-#mqtt_client2.apply_async(queue="queue2")
-
+# mqtt_client1.apply_async(queue="queue1")
+# mqtt_client1.delay()
+# mqtt_client2.apply_async(queue="queue2")

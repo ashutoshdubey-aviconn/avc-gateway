@@ -9,11 +9,12 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
+
 import os
 import logging
 from decouple import config
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 logger = logging.getLogger(__name__)
 
@@ -24,65 +25,65 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'tqxz-lpoko98o=dwr!3se2jl2o7k^$)vkpz7v9ifai(*v)k7@o'
+# SECRET_KEY = 'tqxz-lpoko98o=dwr!3se2jl2o7k^$)vkpz7v9ifai(*v)k7@o'
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False)
+DEBUG = config("DEBUG", default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'wareApp',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
-    'mptt',
-    'django_extensions',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "wareApp",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
+    "mptt",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.staticfiles',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.staticfiles",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
-ROOT_URLCONF = 'warehouse.urls'
+ROOT_URLCONF = "warehouse.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'warehouse.wsgi.application'
+WSGI_APPLICATION = "warehouse.wsgi.application"
 
-AUTH_USER_MODEL = 'wareApp.User'
+AUTH_USER_MODEL = "wareApp.User"
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -98,37 +99,37 @@ DATABASES = {
     }
 }
 
-#DATABASES = {
-   #'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-   #}
-#}
+# DATABASES = {
+#'default': {
+#'ENGINE': 'django.db.backends.sqlite3',
+#'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+# }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -139,46 +140,61 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/warehouse/static/'
+STATIC_URL = "/warehouse/static/"
 
-#STATICFILES_DIRS = [
+# STATICFILES_DIRS = [
 #    os.path.join(BASE_DIR, "static"),
-    #'/var/www/static/',
-#]
+#'/var/www/static/',
+# ]
 
+# Celery
+
+CELERY_BROKER_URL = config(
+    "CELERY_BROKER_URL",
+    default="amqp://guest:guest@localhost:5672//",
+)
+
+CELERY_RESULT_BACKEND = None
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 STATIC_ROOT = os.path.join(os.path.join(BASE_DIR, "warehouse/static/"))
-CELERY_IMPORTS = ('warehouse.wareApp.tasks')
-
-#CELERY_TIMEZONE = TIME_ZONE
 
 
-#LOGGING = {
- #   'version': 1,
-  #  'disable_existing_loggers': False,
-   # 'handlers': {
-    #    'console': {
-     #       'level': 'DEBUG',
-      #      'class': 'logging.StreamHandler',
-       #     'formatter': 'verbose'
-       # },
-   # },
-    #'formatters': {
-     #   'verbose': {
-      #      'format': '%(asctime)s %(levelname)s module=%(module)s, '
-       #     'process_id=%(process)d, %(message)s'
-       # }
-    #},
-    #'loggers': {
-     #   'my_app1': {
-      #      'handlers': ['console'],
-       #     'level': 'DEBUG',
-        #    'propagate': False #this will do the trick
-        #},
-        #'celery': {
-        #    'handlers': ['console'],
-         #   'level': 'DEBUG',
-          #  'propagate': True
-       # },
-    #}
-#}
+# CELERY_IMPORTS = ('warehouse.wareApp.tasks')
 
+# CELERY_TIMEZONE = TIME_ZONE
+
+
+# LOGGING = {
+#   'version': 1,
+#  'disable_existing_loggers': False,
+# 'handlers': {
+#    'console': {
+#       'level': 'DEBUG',
+#      'class': 'logging.StreamHandler',
+#     'formatter': 'verbose'
+# },
+# },
+#'formatters': {
+#   'verbose': {
+#      'format': '%(asctime)s %(levelname)s module=%(module)s, '
+#     'process_id=%(process)d, %(message)s'
+# }
+# },
+#'loggers': {
+#   'my_app1': {
+#      'handlers': ['console'],
+#     'level': 'DEBUG',
+#    'propagate': False #this will do the trick
+# },
+#'celery': {
+#    'handlers': ['console'],
+#   'level': 'DEBUG',
+#  'propagate': True
+# },
+# }
+# }
