@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from constants.topics import supply_time_state_topic
@@ -9,7 +10,6 @@ from wareApp.models import (
     Site,
     SupplyLoadTimeShare,
 )
-import logging
 
 logger = logging.getLogger(__name__)
 

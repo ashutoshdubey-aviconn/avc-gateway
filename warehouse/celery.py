@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
+import logging
 import os
 
 from celery import Celery
-import logging
 
 # from django.conf import settings
 from warehouse import settings

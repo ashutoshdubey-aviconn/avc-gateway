@@ -1,6 +1,6 @@
+import logging
 import os
 import time
-import logging
 
 from constants.topics import remote_access_state_topic
 from wareApp.models import HomeGatewayId
@@ -38,8 +38,8 @@ def handle_remote_access(client, msg, message, msg_type):
         while count < autossh_retry_count:
             time.sleep(5)
             status = os.popen("pgrep autossh").read().split("\n")[0]
-                if status != "":
-                    logger.info("Autossh started successfully.")
+            if status != "":
+                logger.info("Autossh started successfully.")
                 break
             logger.info("Retrying autossh")
             os.system(command)
@@ -61,9 +61,7 @@ def handle_remote_access(client, msg, message, msg_type):
             )
             os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
             os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
-            msg = "Rssh and monitoring port restarted for gateway id {}.".format(
-                gw_id.hgw_id
-            )
+            msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
             logger.warning(msg)
             client.publish(topicsend, msg, qos=1, retain=False)
             return True

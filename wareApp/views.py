@@ -1,4 +1,5 @@
 # flake8: noqa
+import logging
 from datetime import datetime, time
 
 from django.contrib.auth import get_user_model
@@ -6,6 +7,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group, User
 from rest_framework import viewsets
 from rest_framework.response import Response
+
+logger = logging.getLogger(__name__)
 
 from .models import *  # noqa: F403,F405
 
@@ -36,24 +39,24 @@ def entryExit(aFunc):
     """Trace entry, exit and exceptions."""
 
     def loggedFunc(*args, **kw):
-        print("*********************")
-        print(
-            "enter In Function : {} at {} ".format(
-                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
-            )
+        logger.debug("*********************")
+        logger.info(
+            "enter In Function : %s at %s",
+            aFunc.__name__,
+            str(time.strftime("%I:%M:%S %p")),
         )
         try:
             result = aFunc(*args, **kw)
-            print("These are the arguments {} and results {}".format(args, result))
+            logger.info("These are the arguments %s and results %s", args, result)
         except Exception as e:
-            print("exception in {}  and {}".format(aFunc.__name__, e))
+            logger.exception("exception in %s and %s", aFunc.__name__, e)
 
-        print(
-            "exit from Function : {} at {} ".format(
-                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
-            )
+        logger.info(
+            "exit from Function : %s at %s",
+            aFunc.__name__,
+            str(time.strftime("%I:%M:%S %p")),
         )
-        print("*********************")
+        logger.debug("*********************")
         return result
 
     loggedFunc.__name__ = aFunc.__name__

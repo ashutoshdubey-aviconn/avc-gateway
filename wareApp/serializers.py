@@ -1,4 +1,5 @@
 import base64
+import logging
 
 from django.contrib.auth import authenticate
 from django.core import exceptions
@@ -6,6 +7,8 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
 from .models import CustomerInfo, Site, User
+
+logger = logging.getLogger(__name__)
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -19,22 +22,22 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, data):
-        print("dataa")
+        logger.debug("Login data received")
         username = data.get("username", "")
         password = base64.b64decode(data.get("password", ""))
-        print(password)
+        logger.debug("Decoded password length=%d", len(password) if password else 0)
 
         if username and password:
             user = authenticate(username=username, password=password)
-            print("user", user)
+            logger.debug("Authenticated user=%s", user)
             if user:
                 data["user"] = user
             else:
-                print("user authentication fails")
+                logger.info("User authentication fails for username=%s", username)
                 msg = "invalid credentials. try again"
                 return exceptions.ValidationError(msg)
         else:
-            print("username & password doesnt exist")
+            logger.info("username & password missing in request")
             msg = "invalid data"
             return exceptions.ValidationError(msg)
 
@@ -57,7 +60,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCustomerInfoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
@@ -71,7 +73,6 @@ class UserCustomerInfoSerializer(serializers.ModelSerializer):
 
 
 class CustomerInfoSerializer(serializers.ModelSerializer):
-
     customer = UserCustomerInfoSerializer(many=False, read_only=True)
 
     class Meta:
@@ -80,14 +81,12 @@ class CustomerInfoSerializer(serializers.ModelSerializer):
 
 
 class CustomerWarehouseDetailSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Site
         fields = ["id", "site_name", "site_manager_number"]
 
 
 class SiteSerializer(serializers.ModelSerializer):
-
     site_manager = UserSerializer(many=False, read_only=True)
 
     class Meta:

@@ -1,6 +1,7 @@
+import logging
+
 from utils.helpers import update_phase_entry
 from wareApp.models import SiteLoadPower
-import logging
 
 logger = logging.getLogger(__name__)
 

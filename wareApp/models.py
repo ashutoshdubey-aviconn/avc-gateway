@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
@@ -5,6 +7,8 @@ from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django_extensions.db.models import TimeStampedModel
 from mptt.models import MPTTModel, TreeForeignKey
+
+logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
@@ -21,7 +25,7 @@ class User(AbstractUser):
 
 def Create_Group(sender, instance, *args, **kwargs):
     if instance._state.adding is True and len(Group.objects.filter(name=instance.get_UserType_display())):
-        print("Group has been created successfully ")
+        logger.info("Group has been created successfully: %s", instance.get_UserType_display())
         Group.objects.create(name=instance.get_UserType_display())
 
 
@@ -30,12 +34,12 @@ def Add_group_to_user(sender, instance, *args, **kwargs):
         if instance.UserType == 1:
             User.objects.filter(username=instance.username).update(is_staff=True)
         g = Group.objects.filter(name=instance.get_UserType_display())
-        print(g)
-        print("Instance has been added inside the group")
+        logger.debug("Groups matched for user %s: %s", instance.username, list(g))
+        logger.info("Instance has been added inside the group")
         instance.groups.set(g)
 
-    except Exception:
-        pass
+    except Exception as e:
+        logger.exception("Error adding user to group: %s", e)
 
 
 post_save.connect(Add_group_to_user, sender=User)
@@ -377,7 +381,6 @@ class SiteLoadPower(models.Model):
 
 
 class MeterSource(models.Model):
-
     Associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     meter_id = models.PositiveIntegerField(primary_key=True)
     meter_number = models.PositiveIntegerField(null=True, blank=True)

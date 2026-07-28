@@ -3,7 +3,7 @@ from datetime import datetime
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
 from utils.payload import build_source_status_message
-from wareApp.models import HomeGatewayId, MeterSource, SiteLoadPower, Site
+from wareApp.models import HomeGatewayId, MeterSource, Site, SiteLoadPower
 
 
 def handle_source_message(client, msg, site, msg_type, message):
@@ -90,12 +90,8 @@ def handle_source_message(client, msg, site, msg_type, message):
     )
 
     if source_1_entry.exists():
-        publish_status(
-            client, topictosend, build_source_status_message(source_1_entry.first())
-        )
+        publish_status(client, topictosend, build_source_status_message(source_1_entry.first()))
     if source_2_entry.exists():
-        publish_status(
-            client, topictosend, build_source_status_message(source_2_entry.first())
-        )
+        publish_status(client, topictosend, build_source_status_message(source_2_entry.first()))
 
     return True

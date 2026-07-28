@@ -1,5 +1,5 @@
-from datetime import datetime
 import logging
+from datetime import datetime
 
 from energy.apparent_enery import handle_apparent
 from energy.meter import handle_meter_connection, handle_meter_energy

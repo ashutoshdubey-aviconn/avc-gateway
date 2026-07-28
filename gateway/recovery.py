@@ -1,3 +1,4 @@
+import logging
 import re
 import time
 from datetime import datetime, timedelta
@@ -10,14 +11,11 @@ from wareApp.models import (
     Site,
     SupplyLoadTimeShare,
 )
-import logging
 
 logger = logging.getLogger(__name__)
 
 
-def handle_sync_message(
-    client, msg, message, msg_type, msg_subtype, site, current_time
-):
+def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, current_time):
     if "sync" not in msg_type:
         return False
 
@@ -32,19 +30,21 @@ def handle_sync_message(
             dateHourLastEntry = last_entry_date.replace(hour=last_entry_date_hour)
             dateHourLastEntryHour = dateHourLastEntry
             logger.info(
-                "This message has been received to recover the lost data on the server for %s seconds for aisle group id %s.",
+                "This message has been received to recover the lost data on the server for %s seconds "
+                "for aisle group id %s.",
                 float(missed_time.split(":")[1]),
                 aisle_group_id,
             )
-            logger.info("This is the time sent by the server to start recovery : %s", dateHourLastEntry)
-            logger.info("Firstly sending daily consumption data for quick recovery.")
-            legs = DailySiteReading.objects.filter(
-                reading_for__gte=last_entry_date.date()
+            logger.info(
+                "This is the time sent by the server to start recovery : %s",
+                dateHourLastEntry,
             )
+            logger.info("Firstly sending daily consumption data for quick recovery.")
+            legs = DailySiteReading.objects.filter(reading_for__gte=last_entry_date.date())
             sync_date = current_time.date()
-            gw_total_cumulative = AisleGroup.objects.filter(
-                site=site, aisle_grp_id=int(aisle_group_id)
-            )[0].cumulative_consumption
+            gw_total_cumulative = AisleGroup.objects.filter(site=site, aisle_grp_id=int(aisle_group_id))[
+                0
+            ].cumulative_consumption
             topictosend1 = (
                 "/Acclivate/iOmniControl/"
                 + str(Site.objects.all()[0].id)
@@ -55,14 +55,10 @@ def handle_sync_message(
 
             while dateHourLastEntry.date() <= sync_date:
                 recovery_dates, daily_unit_consumptions = "", ""
-                daily_consumption_entry = legs.filter(
-                    leg_id=aisle_group_id, reading_for=dateHourLastEntry.date()
-                )
+                daily_consumption_entry = legs.filter(leg_id=aisle_group_id, reading_for=dateHourLastEntry.date())
                 recovery_dates += dateHourLastEntry.strftime("%Y-%m-%d") + ","
                 if daily_consumption_entry.exists():
-                    daily_unit_consumptions += (
-                        str(daily_consumption_entry[0].unit_consumption) + ","
-                    )
+                    daily_unit_consumptions += str(daily_consumption_entry[0].unit_consumption) + ","
                 else:
                     daily_unit_consumptions += "ERROR404,"
                 msg_payload = (
@@ -95,13 +91,9 @@ def handle_sync_message(
                     reading_from__lte=dateHourLastEntryHour,
                     reading_to__gte=dateHourLastEntryHour,
                 )
-                recovery_hours += (
-                    dateHourLastEntryHour.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
-                )
+                recovery_hours += dateHourLastEntryHour.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
                 if hourly_entry.exists():
-                    hourly_unit_consumptions += (
-                        str(hourly_entry[0].unit_consumption) + ","
-                    )
+                    hourly_unit_consumptions += str(hourly_entry[0].unit_consumption) + ","
                 else:
                     hourly_unit_consumptions += "ERROR404,"
                 msg_payload = (
@@ -131,9 +123,7 @@ def handle_sync_message(
                 "Power_source : (.*), Missed_consumption_time_in_secs : (.*), Last_synced_hour : (.*)'",
                 message,
             ).groups()
-            power_source = SupplyLoadTimeShare.objects.filter(
-                power_source=int(powerSource)
-            )
+            power_source = SupplyLoadTimeShare.objects.filter(power_source=int(powerSource))
             missed_time = float(missedTime)
             last_synced_hour = datetime.strptime(syncHour, "%Y-%m-%d %H:%M:%S.%f")
             logger.info("Readings missed on server for %s seconds.", missed_time)
@@ -143,14 +133,10 @@ def handle_sync_message(
             )
             logger.info("Last synced datetime %s", last_synced_hour)
             recovery_data = power_source.filter(reading_to__gte=last_synced_hour)
-            last_synced_hour = last_synced_hour.replace(
-                minute=0, second=0, microsecond=0
-            )
+            last_synced_hour = last_synced_hour.replace(minute=0, second=0, microsecond=0)
             recovery_hours, recovered_load_runtime = "", ""
             while current_time >= last_synced_hour:
-                recovery_hours += (
-                    last_synced_hour.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
-                )
+                recovery_hours += last_synced_hour.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
                 load_runtime = recovery_data.filter(reading_from=last_synced_hour)
                 if load_runtime.exists():
                     recovered_load_runtime += str(load_runtime[0].hourly_run_time) + ","

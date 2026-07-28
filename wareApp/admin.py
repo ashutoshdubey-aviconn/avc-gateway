@@ -5,7 +5,6 @@ from .models import *  # noqa: F403,F405
 
 
 class HourlyReadingFields(admin.ModelAdmin):
-
     list_display = [
         "associated_Site",
         "aisle_group",
@@ -19,7 +18,6 @@ class HourlyReadingFields(admin.ModelAdmin):
 
 
 class SupplyTimeShareFields(admin.ModelAdmin):
-
     list_display = [
         "site",
         "power_source",
