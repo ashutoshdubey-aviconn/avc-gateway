@@ -1,5 +1,8 @@
 from utils.helpers import update_phase_entry
 from wareApp.models import SiteLoadPower
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _handle_phase(client, msg, site, msg_type, suffix, required_code):
@@ -13,7 +16,7 @@ def _handle_phase(client, msg, site, msg_type, suffix, required_code):
         return True
     updated = update_phase_entry(entry, msg_type[5], suffix, msg.payload)
     if updated is not None:
-        print(f"Phase {msg_type[5]} {suffix} updated as {updated}.")
+        logger.info("Phase %s %s updated as %s.", msg_type[5], suffix, updated)
     return True
 
 

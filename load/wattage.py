@@ -4,6 +4,9 @@ from datetime import datetime
 from constants.topics import load_data_state_topic
 from utils.payload import build_wattage_load_message
 from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def handle_wattage(client, msg, msg_type, message):
@@ -20,7 +23,7 @@ def handle_wattage(client, msg, msg_type, message):
         if load_entry.exists():
             load_entry.update(Site_Total_Load=load_power)
     except Exception as e:
-        print("This is the exception in wattage block : {}".format(e))
+        logger.exception("Exception in wattage block: %s", e)
     return True
 
 
@@ -58,5 +61,5 @@ def handle_wattage_load(client, msg, msg_type, message):
         if load_power > 0:
             client.publish(topictosend, msg_payload, qos=0, retain=False)
     except Exception as e:
-        print("This is the exception in wattage load block : {}".format(e))
+        logger.exception("Exception in wattage load block: %s", e)
     return True

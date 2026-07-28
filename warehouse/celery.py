@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from celery import Celery
+import logging
 
 # from django.conf import settings
 from warehouse import settings
@@ -24,4 +25,5 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(bind=True)
 def debug_task(self):
-    print("Request: {0!r}".format(self.request))
+    logger = logging.getLogger(__name__)
+    logger.debug("Request: %r", self.request)

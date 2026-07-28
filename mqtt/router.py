@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from energy.apparent_enery import handle_apparent
 from energy.meter import handle_meter_connection, handle_meter_energy
@@ -13,11 +14,11 @@ from load.wattage import handle_wattage, handle_wattage_load
 from mqtt.topic_parser import normalize_payload, parse_mqtt_topic
 from wareApp.models import Site
 
+logger = logging.getLogger(__name__)
+
 
 def route_message(client, msg):
-    print("######################")
-    print("Topic: ", msg.topic, " Message: ", msg.payload)
-    print("######################")
+    logger.debug("MQTT message received: topic=%s payload=%s", msg.topic, msg.payload)
 
     message = normalize_payload(msg.payload)
     parsed = parse_mqtt_topic(msg.topic)

@@ -14,7 +14,7 @@ def start_client():
     """
 
     def on_connect(client, userdata, flags, rc):
-        print("Connected with result code " + str(rc))
+        logger.info("Connected with result code %s", rc)
         client.subscribe("/asem/aviconn/#")
         client.subscribe("/Acclivate/iOmniControl/#", 1)
 

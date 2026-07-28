@@ -1,8 +1,11 @@
 import os
 import time
+import logging
 
 from constants.topics import remote_access_state_topic
 from wareApp.models import HomeGatewayId
+
+logger = logging.getLogger(__name__)
 
 
 def handle_remote_access(client, msg, message, msg_type):
@@ -11,7 +14,7 @@ def handle_remote_access(client, msg, message, msg_type):
 
     gw_id = HomeGatewayId.objects.first()
     if not gw_id:
-        print("No HomeGatewayId record for remote access.")
+        logger.warning("No HomeGatewayId record for remote access.")
         return True
 
     message_parts = message.split("_")
@@ -20,7 +23,7 @@ def handle_remote_access(client, msg, message, msg_type):
     topicsend = remote_access_state_topic(gw_id.connected_to.id, gw_id.hgw_id)
 
     if action == "start":
-        print("Starting autossh.")
+        logger.info("Starting autossh.")
         os.system("pgrep autossh | xargs kill -9")
         command = (
             "autossh -M "
@@ -29,16 +32,16 @@ def handle_remote_access(client, msg, message, msg_type):
             + gw_id.rssh_port
             + ":localhost:22 aviconn@asem1.aviconn.in"
         )
-        print(command)
+        logger.debug("autossh command: %s", command)
         os.system(command)
         count = 0
         while count < autossh_retry_count:
             time.sleep(5)
             status = os.popen("pgrep autossh").read().split("\n")[0]
-            if status != "":
-                print("Autossh started successfully.")
+                if status != "":
+                    logger.info("Autossh started successfully.")
                 break
-            print("Retrying autossh")
+            logger.info("Retrying autossh")
             os.system(command)
             count += 1
         if count >= autossh_retry_count:
@@ -58,32 +61,34 @@ def handle_remote_access(client, msg, message, msg_type):
             )
             os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
             os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
-            msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
-            print(msg)
+            msg = "Rssh and monitoring port restarted for gateway id {}.".format(
+                gw_id.hgw_id
+            )
+            logger.warning(msg)
             client.publish(topicsend, msg, qos=1, retain=False)
             return True
         client.publish(topicsend, "Autossh started successfully.", qos=1, retain=False)
         return True
 
     if action == "stop":
-        print("Stopping autossh!")
+        logger.info("Stopping autossh!")
         os.system("echo odroid | sudo -S pgrep autossh | xargs kill -9")
         os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
         os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
         msg = "Autossh has been stopped. Rssh and Monitoring ports have been closed."
-        print(msg)
+        logger.info(msg)
         client.publish(topicsend, msg, qos=1, retain=False)
         return True
 
     if action == "restart":
-        print("Got a command from server to restart the gateway.")
+        logger.info("Got a command from server to restart the gateway.")
         os.system("echo odroid | sudo -S init 6")
         msg = "Gateway has been restarted."
-        print(msg)
+        logger.info(msg)
         client.publish(topicsend, msg, qos=1, retain=False)
         return True
 
     msg = "Got an unknown command for rssh."
-    print(msg)
+    logger.warning(msg)
     client.publish(topicsend, msg, qos=1, retain=False)
     return True

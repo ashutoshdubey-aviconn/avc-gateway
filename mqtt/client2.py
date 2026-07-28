@@ -9,7 +9,7 @@ logger = get_task_logger(__name__)
 
 def start_client():
     def on_connect(client, userdata, flags, rc):
-        print("Connected with result code " + str(rc))
+        logger.info("Connected with result code %s", rc)
         client.subscribe("/Acclivate/iOmniControl/#")
 
     def on_message(client, userdata, msg):

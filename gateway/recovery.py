@@ -10,6 +10,9 @@ from wareApp.models import (
     Site,
     SupplyLoadTimeShare,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def handle_sync_message(
@@ -28,17 +31,13 @@ def handle_sync_message(
             last_entry_date_hour = int(last_entry_datetime[1])
             dateHourLastEntry = last_entry_date.replace(hour=last_entry_date_hour)
             dateHourLastEntryHour = dateHourLastEntry
-            print(
-                "This message has been received to recover the lost data on the server for {} seconds for aisle group id {}.".format(  # noqa: E501
-                    float(missed_time.split(":")[1]), aisle_group_id
-                )  # noqa: E501
+            logger.info(
+                "This message has been received to recover the lost data on the server for %s seconds for aisle group id %s.",
+                float(missed_time.split(":")[1]),
+                aisle_group_id,
             )
-            print(
-                "This is the time sent by the server to start recovery : {}".format(
-                    dateHourLastEntry
-                )
-            )
-            print("Firstly sending daily consumption data for quick recovery.")
+            logger.info("This is the time sent by the server to start recovery : %s", dateHourLastEntry)
+            logger.info("Firstly sending daily consumption data for quick recovery.")
             legs = DailySiteReading.objects.filter(
                 reading_for__gte=last_entry_date.date()
             )
@@ -79,7 +78,7 @@ def handle_sync_message(
                 client.publish(topictosend1, msg_payload, qos=0, retain=False)
                 dateHourLastEntry += timedelta(days=1)
 
-            print("Now starting delayed recovery for hourly consumption data.")
+            logger.info("Now starting delayed recovery for hourly consumption data.")
             topictosend1 = (
                 "/Acclivate/iOmniControl/"
                 + str(Site.objects.all()[0].id)
@@ -116,15 +115,14 @@ def handle_sync_message(
                     + str(gw_total_cumulative)
                 )
                 client.publish(topictosend1, msg_payload, qos=0, retain=False)
-                print(
-                    "Hourly consumption data for aisle group id {} synced with cloud server.".format(
-                        aisle_group_id
-                    )
+                logger.info(
+                    "Hourly consumption data for aisle group id %s synced with cloud server.",
+                    aisle_group_id,
                 )
                 time.sleep(2)
                 dateHourLastEntryHour += timedelta(hours=1)
         except Exception as e:
-            print("This is the exception in consumption sync block : {}".format(e))
+            logger.exception("Exception in consumption sync block: %s", e)
         return True
 
     if msg_subtype == "loadTime":
@@ -138,13 +136,12 @@ def handle_sync_message(
             )
             missed_time = float(missedTime)
             last_synced_hour = datetime.strptime(syncHour, "%Y-%m-%d %H:%M:%S.%f")
-            print("Readings missed on server for {} seconds.".format(missed_time))
-            print(
-                "Message received for recovery of runtime for {}".format(
-                    power_source[0].get_power_source_display()
-                )
+            logger.info("Readings missed on server for %s seconds.", missed_time)
+            logger.info(
+                "Message received for recovery of runtime for %s",
+                power_source[0].get_power_source_display(),
             )
-            print("Last synced datetime {}".format(last_synced_hour))
+            logger.info("Last synced datetime %s", last_synced_hour)
             recovery_data = power_source.filter(reading_to__gte=last_synced_hour)
             last_synced_hour = last_synced_hour.replace(
                 minute=0, second=0, microsecond=0
@@ -176,12 +173,10 @@ def handle_sync_message(
                 + "/in/recovery/loadRuntime"
             )
             client.publish(topictosend, msg_payload, qos=0, retain=False)
-            print("Load runtime recovery message sent to server.")
+            logger.info("Load runtime recovery message sent to server.")
         except Exception as e:
-            print("This is the exception in load runtime recovery block : {}".format(e))
+            logger.exception("Exception in load runtime recovery block: %s", e)
         return True
 
-    print("#####################################################")
-    print("****** Received an unknown sync message. ********")
-    print("#####################################################")
+    logger.warning("Received an unknown sync message: %s", message)
     return True

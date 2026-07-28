@@ -171,32 +171,31 @@ STATIC_ROOT = os.path.join(os.path.join(BASE_DIR, "warehouse/static/"))
 # CELERY_TIMEZONE = TIME_ZONE
 
 
-# LOGGING = {
-#   'version': 1,
-#  'disable_existing_loggers': False,
-# 'handlers': {
-#    'console': {
-#       'level': 'DEBUG',
-#      'class': 'logging.StreamHandler',
-#     'formatter': 'verbose'
-# },
-# },
-#'formatters': {
-#   'verbose': {
-#      'format': '%(asctime)s %(levelname)s module=%(module)s, '
-#     'process_id=%(process)d, %(message)s'
-# }
-# },
-#'loggers': {
-#   'my_app1': {
-#      'handlers': ['console'],
-#     'level': 'DEBUG',
-#    'propagate': False #this will do the trick
-# },
-#'celery': {
-#    'handlers': ['console'],
-#   'level': 'DEBUG',
-#  'propagate': True
-# },
-# }
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s %(levelname)s %(name)s:%(lineno)d - %(message)s",
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "level": "INFO",
+        }
+    },
+    "loggers": {
+        "": {  # root logger
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "celery": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}

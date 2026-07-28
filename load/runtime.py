@@ -9,6 +9,9 @@ from wareApp.models import (
     Site,
     SupplyLoadTimeShare,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def handle_load_time(client, msg, site, msg_type, message_for, message, current_time):
@@ -93,5 +96,5 @@ def handle_load_time(client, msg, site, msg_type, message_for, message, current_
                 updated_on=datetime.now(),
             )
     except Exception as e:
-        print("This is the exception in load time block : {}".format(e))
+        logger.exception("Exception in load time block: %s", e)
     return True
