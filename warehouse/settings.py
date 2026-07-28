@@ -87,6 +87,7 @@ WSGI_APPLICATION = "warehouse.wsgi.application"
 AUTH_USER_MODEL = "wareApp.User"
 
 # Database
+# flake8: noqa
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {

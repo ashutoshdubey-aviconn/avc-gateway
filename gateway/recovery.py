@@ -29,7 +29,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
             print(
                 "This message has been received to recover the lost data on the server for {} seconds for aisle group id {}.".format(
                     float(missed_time.split(":")[1]), aisle_group_id
-                )
+                )  # noqa: E501
             )
             print("This is the time sent by the server to start recovery : {}".format(dateHourLastEntry))
             print("Firstly sending daily consumption data for quick recovery.")
