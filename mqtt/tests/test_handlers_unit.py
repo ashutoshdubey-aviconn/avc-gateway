@@ -39,6 +39,10 @@ class HandlerUnitTests(TestCase):
         msg_type = ["SRC", "x", "0", "SOURCE"]
         res = handle_source_message(client, None, self.site, msg_type, "1")
         self.assertTrue(res)
+        # Verify SiteLoadPower status updated to ON
+        slp = SiteLoadPower.objects.filter(Associated_Site=self.site, Meter_Number=0).first()
+        self.assertIsNotNone(slp)
+        self.assertEqual(slp.Status, "ON")
 
     def test_handle_load_time_creates_supply_entry(self):
         from load.runtime import handle_load_time
@@ -97,6 +101,12 @@ class HandlerUnitTests(TestCase):
         self.assertTrue(res)
         # ensure publish was called (since load_power > 0)
         self.assertTrue(len(client.published) >= 1)
+        # Verify LoadData row updated
+        ld = LoadData.objects.filter(Associated_Site=self.site, Meter_Number=0).first()
+        self.assertIsNotNone(ld)
+        self.assertAlmostEqual(float(ld.site_total_load), 55.5, places=3)
+        self.assertIsNotNone(ld.Updated_on)
+        self.assertIsNotNone(ld.epochTime)
 
     def test_handle_apparent_updates_meter_readings_and_hourly(self):
         from energy.apparent_enery import handle_apparent
