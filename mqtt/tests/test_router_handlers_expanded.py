@@ -35,8 +35,9 @@ class RouterExpandedHandlerTests(TestCase):
             "watt": patch("mqtt.router.handle_wattage"),
             "watt_load": patch("mqtt.router.handle_wattage_load"),
             "apparent": patch("mqtt.router.handle_apparent"),
+            "remote": patch("mqtt.router.handle_remote_access"),
+            "sync": patch("mqtt.router.handle_sync_message"),
         }
-
         with patches["meter_conn"].start() as meter_conn, patches["meter_energy"].start() as meter_energy, patches[
             "voltage"
         ].start() as voltage, patches["current"].start() as current, patches["pf"].start() as pf, patches[
@@ -49,8 +50,14 @@ class RouterExpandedHandlerTests(TestCase):
             "watt_load"
         ].start() as watt_load, patches[
             "apparent"
-        ].start() as apparent:
+        ].start() as apparent, patches[
+            "remote"
+        ].start() as remote, patches[
+            "sync"
+        ].start() as sync:
             meter_conn.return_value = False
+            remote.return_value = False
+            sync.return_value = False
             # Call router; should complete without exceptions
             from mqtt.router import route_message
 
