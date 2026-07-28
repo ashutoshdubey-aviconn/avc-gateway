@@ -10,10 +10,18 @@ from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
-from .models import *  # noqa: F403,F405
+from .models import (
+    AisleGroup,
+    CustomerInfo,
+    HomeGatewayId,
+    MeterSource,
+    Site,
+    SmartEnergyDevices,
+)
+from .models import User as LocalUser
 
 # from warehouse.wareApp import sendmail
-from .serializers import *  # noqa: F403,F405
+from .serializers import LoginSerializer, TokenSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

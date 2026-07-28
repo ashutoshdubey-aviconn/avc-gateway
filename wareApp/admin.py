@@ -1,7 +1,27 @@
 # flake8: noqa
 from django.contrib import admin
 
-from .models import *  # noqa: F403,F405
+from .models import (
+    AisleGroup,
+    AisleInfo,
+    AlarmNotifications,
+    BlockInfo,
+    CustomerInfo,
+    DailySiteReading,
+    Floor,
+    HomeGatewayId,
+    HourlySiteReading,
+    Image,
+    LoadData,
+    MeterReadings,
+    MeterSource,
+    Panel,
+    Site,
+    SiteLoadPower,
+    SmartEnergyDevices,
+    SupplyLoadTimeShare,
+    User,
+)
 
 
 class HourlyReadingFields(admin.ModelAdmin):
