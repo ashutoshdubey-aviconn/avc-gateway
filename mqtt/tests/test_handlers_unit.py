@@ -50,7 +50,7 @@ class HandlerUnitTests(TestCase):
         MeterSource.objects.create(
             meter_id=2,
             meter_number=0,
-            power_source_1=0,
+            power_source_1=1,
             meter_type=1,
             is_PS2_valid=False,
             Associated_Site=self.site,
