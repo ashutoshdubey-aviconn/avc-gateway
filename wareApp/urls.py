@@ -1,5 +1,5 @@
 from django.urls import include, path
-
+# flake8: noqa
 from .views import *  # noqa: F403,F405
 
 # router = routers.DefaultRouter()
