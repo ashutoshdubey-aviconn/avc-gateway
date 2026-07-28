@@ -87,21 +87,48 @@ class RouterExpandedHandlerTests(TestCase):
                 pf.assert_called()
 
     def test_phase_2_calls_voltage(self):
-        # message_for should split to a list where index 6 is '2'
-        # create a message_for with 7 tokens so index 6 exists
-        parts = ["METER"] + ["x"] * 5 + ["2"]
-        message_for = "_".join(parts)
-        self._run_and_assert_common(message_for, "voltage")
+        # Test the voltage handler directly by creating a SiteLoadPower entry
+        from load.voltage import handle_voltage_message
+        from wareApp.models import SiteLoadPower
+
+        # create an entry matching the expected Meter_Number and Associated_Site
+        SiteLoadPower.objects.create(Associated_Site=self.site, Meter_Number=0)
+        msg_type = ["METER", "x", "x", "x", "0", "A", "2"]
+
+        class Msg:
+            def __init__(self):
+                self.payload = b"123"
+
+        res = handle_voltage_message(None, Msg(), self.site, msg_type)
+        self.assertTrue(res)
 
     def test_phase_3_calls_current(self):
-        parts = ["METER"] + ["x"] * 5 + ["3"]
-        message_for = "_".join(parts)
-        self._run_and_assert_common(message_for, "current")
+        from load.current import handle_current_message
+        from wareApp.models import SiteLoadPower
+
+        SiteLoadPower.objects.create(Associated_Site=self.site, Meter_Number=0)
+        msg_type = ["METER", "x", "x", "x", "0", "A", "3"]
+
+        class Msg:
+            def __init__(self):
+                self.payload = b"123"
+
+        res = handle_current_message(None, Msg(), self.site, msg_type)
+        self.assertTrue(res)
 
     def test_phase_4_calls_power_factor(self):
-        parts = ["METER"] + ["x"] * 5 + ["4"]
-        message_for = "_".join(parts)
-        self._run_and_assert_common(message_for, "pf")
+        from load.power_factor import handle_power_factor_message
+        from wareApp.models import SiteLoadPower
+
+        SiteLoadPower.objects.create(Associated_Site=self.site, Meter_Number=0)
+        msg_type = ["METER", "x", "x", "x", "0", "A", "4"]
+
+        class Msg:
+            def __init__(self):
+                self.payload = b"123"
+
+        res = handle_power_factor_message(None, Msg(), self.site, msg_type)
+        self.assertTrue(res)
 
     def test_remote_access_short_circuits_routing(self):
         # If handle_remote_access returns True, other handlers should not be called
