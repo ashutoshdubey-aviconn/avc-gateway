@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import *
+from .views import *  # noqa: F403,F405
 
 # router = routers.DefaultRouter()
 # router.register('tokens', TokenViewSet)

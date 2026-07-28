@@ -43,7 +43,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
                 + str(Site.objects.all()[0].id)
                 + "/"
                 + HomeGatewayId.objects.all()[0].hgw_id
-                + "/in/recovery/dailyConsumption/state"
+                + "/in/recovery/dailyConsumption/state"  # noqa: E501
             )
 
             while dateHourLastEntry.date() <= sync_date:
@@ -73,7 +73,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
                 + str(Site.objects.all()[0].id)
                 + "/"
                 + HomeGatewayId.objects.all()[0].hgw_id
-                + "/in/recovery/hourlyConsumption"
+                + "/in/recovery/hourlyConsumption"  # noqa: E501
             )
             sync_hour = datetime.now()
 

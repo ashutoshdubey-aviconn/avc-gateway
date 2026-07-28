@@ -4,14 +4,14 @@ import os
 from prettytable import PrettyTable
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "warehouse.settings")
-import django
+import django  # noqa: E402
 
-django.setup()
+django.setup()  # noqa: E402
 
-import requests
+import requests  # noqa: E402
 
 # import project.app.models
-from wareApp.views import *
+from wareApp.views import *  # noqa: F403,F405,E402
 
 BASE_URL = "https://asem1.aviconn.in:8005/api/"
 # LOCAL_BASE_URL = "http://localhost:8005/api/"

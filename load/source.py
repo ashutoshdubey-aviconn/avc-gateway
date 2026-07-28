@@ -3,7 +3,7 @@ from datetime import datetime
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
 from utils.payload import build_source_status_message
-from wareApp.models import HomeGatewayId, MeterSource, SiteLoadPower
+from wareApp.models import HomeGatewayId, MeterSource, SiteLoadPower, Site
 
 
 def handle_source_message(client, msg, site, msg_type, message):

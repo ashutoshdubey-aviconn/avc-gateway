@@ -6,10 +6,10 @@ from django.contrib.auth.models import Group, User
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from .models import *
+from .models import *  # noqa: F403,F405
 
 # from warehouse.wareApp import sendmail
-from .serializers import *
+from .serializers import *  # noqa: F403,F405
 
 
 class UserViewSet(viewsets.ModelViewSet):
