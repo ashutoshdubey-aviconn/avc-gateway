@@ -37,14 +37,22 @@ def entryExit(aFunc):
 
     def loggedFunc(*args, **kw):
         print("*********************")
-        print("enter In Function : {} at {} ".format(aFunc.__name__, str(time.strftime("%I:%M:%S %p"))))
+        print(
+            "enter In Function : {} at {} ".format(
+                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
+            )
+        )
         try:
             result = aFunc(*args, **kw)
             print("These are the arguments {} and results {}".format(args, result))
         except Exception as e:
             print("exception in {}  and {}".format(aFunc.__name__, e))
 
-        print("exit from Function : {} at {} ".format(aFunc.__name__, str(time.strftime("%I:%M:%S %p"))))
+        print(
+            "exit from Function : {} at {} ".format(
+                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
+            )
+        )
         print("*********************")
         return result
 

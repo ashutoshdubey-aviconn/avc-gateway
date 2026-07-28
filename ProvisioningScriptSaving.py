@@ -16,7 +16,10 @@ from wareh.wareApp.views import *  # noqa: F403,F405,E402
 
 BASE_URL = "https://asem1.aviconn.in:8005/api/"
 # LOCAL_BASE_URL = "http://localhost:8005/api/"
-SECRET_KEY = {"Content-Type": "application/json", "Authorization": "e$&$xp0gc5wep%95=_s#@+m-s+9pp^*rx%7r+d+$iatu#0opav"}
+SECRET_KEY = {
+    "Content-Type": "application/json",
+    "Authorization": "e$&$xp0gc5wep%95=_s#@+m-s+9pp^*rx%7r+d+$iatu#0opav",
+}
 
 
 def main():
@@ -58,7 +61,9 @@ def main():
                 customer = create_customer_on_global_cloud(json.dumps(customer_data))
                 print("customer data : ", customer)
                 if customer["status"] == 200:
-                    print("customer created on cloud server. create customer here for gateway")
+                    print(
+                        "customer created on cloud server. create customer here for gateway"
+                    )
                     customer_data["id"] = customer["user_id"]
                     create_customer(customer_data)
             elif cust_options == 2:
@@ -76,11 +81,17 @@ def main():
                     )
                 allCustomerIds = [i["id"] for i in all_customer["data"]]
                 print(allCustomerIds)
-                customer_id = int(input("Choose customer id for the site you wanna create"))
+                customer_id = int(
+                    input("Choose customer id for the site you wanna create")
+                )
                 if customer_id not in allCustomerIds:
-                    print("you have entered wrong customer Id. Please choose from the right options")
+                    print(
+                        "you have entered wrong customer Id. Please choose from the right options"
+                    )
                     break
-                customer_data = fetch_particular_customer_from_global_cloud(json.dumps({"id": customer_id}))
+                customer_data = fetch_particular_customer_from_global_cloud(
+                    json.dumps({"id": customer_id})
+                )
                 print("customer_data : ", customer_data, "type", type(customer_data))
                 customer_name = customer_data["username"]
                 customer_email = customer_data["email"]
@@ -114,7 +125,9 @@ def main():
             print(x)
             allCustomerIds = [i["id"] for i in all_customer["data"]]
             print(allCustomerIds)
-            customer_id = int(input("Choose customer id for the site you wanna create : "))
+            customer_id = int(
+                input("Choose customer id for the site you wanna create : ")
+            )
             if customer_id not in allCustomerIds:
                 print("You entered wrong customer id....")
                 break
@@ -133,7 +146,9 @@ def main():
             site = create_site_on_global_cloud(json.dumps(site_data))
             print("site", site)
             if site["status"] == 200:
-                print("site created successfully on global cloud , create entry for gateway here")
+                print(
+                    "site created successfully on global cloud , create entry for gateway here"
+                )
                 site_data["site_id"] = site["site_id"]
                 create_site(site_data)
 
@@ -176,7 +191,9 @@ def main():
                 aisle = create_aisle_group_for_particular_site(json.dumps(aisle_data))
                 if aisle["status"] == 200:
                     aisle_data["aisle_id"] = aisle["aisle_id"]
-                    print("aisle create successfully on cloud server. create on gateway")
+                    print(
+                        "aisle create successfully on cloud server. create on gateway"
+                    )
                     create_aisle_group(aisle_data)
                     print("1. For continue creating aisle group for above site")
                     print("2. For exit")
@@ -205,7 +222,9 @@ def main():
             # print("\n")
             site_id = fetch_site_id()
             print("LocationId : ", site_id)
-            home_gateway_name = input("Enter home gateway Id ex:(avc_sitename_locationname_0000locationid_gatewayid): ")
+            home_gateway_name = input(
+                "Enter home gateway Id ex:(avc_sitename_locationname_0000locationid_gatewayid): "
+            )
             # changes done here on august 3 2021
             if int(last_hw_r_port) < 40000:
                 rssh_port = 40000
@@ -230,7 +249,9 @@ def main():
                 print("home gateway created successfully")
                 create_home_gateway_id(data)
 
-        elif options == 5:  # for creating smart energy devices entry in local gateway only
+        elif (
+            options == 5
+        ):  # for creating smart energy devices entry in local gateway only
             print("saving database entry for smart energy devices ")
             location_id = fetch_site_id()
             all_aisle_groups = fetch_all_aisle_groups()
@@ -238,7 +259,13 @@ def main():
             aisle_counter = 1
             while aisle_counter:
                 for aisle in all_aisle_groups:
-                    print("aisle name : " + aisle.aisleGroupName + " " + "aisle group id = " + str(aisle.aisle_grp_id))
+                    print(
+                        "aisle name : "
+                        + aisle.aisleGroupName
+                        + " "
+                        + "aisle group id = "
+                        + str(aisle.aisle_grp_id)
+                    )
                 aisle_id = [i.id for i in all_aisle_groups]
                 print(aisle_id)
                 print("\n")
@@ -251,7 +278,9 @@ def main():
                 siteType = fetch_site_type_from_gateway()
                 # location_id = int(input("Enter location id : "))
                 # instance_count = 1
-                instance_count = int(input("Enter total number of instance to create : "))
+                instance_count = int(
+                    input("Enter total number of instance to create : ")
+                )
                 meter_id = input("Enter meter id : ")
                 # while total_instance:
                 floor = input("Enter floor type (GF, FF, SF,TF,FF) : ")
@@ -284,11 +313,15 @@ def main():
                 # choice = int(input("Enter your choice"))
                 # if choice == 2:
                 #     smart_count = 0
-                aisle_choice = input("Enter 1 to create more smart energy devices for different aisle, 2 to exit")
+                aisle_choice = input(
+                    "Enter 1 to create more smart energy devices for different aisle, 2 to exit"
+                )
                 if int(aisle_choice) == 2:
                     aisle_counter = 0
 
-            print("################ meter's configuration of openhab started ##################")
+            print(
+                "################ meter's configuration of openhab started ##################"
+            )
             all_meter_id = set()
             all_smart_devices = fetch_smart_energy_devices()
             print("all_smart_devices", all_smart_devices)
@@ -301,9 +334,13 @@ def main():
                 print("meterId :", meterId)
                 openhab = write_data_to_openhab(meterId, siteType)
 
-            print("%%%%%%%%%%%%%%%%%%%%%%%%% Openhab configuration completed %%%%%%%%%%%%%%%%%%%%%")
+            print(
+                "%%%%%%%%%%%%%%%%%%%%%%%%% Openhab configuration completed %%%%%%%%%%%%%%%%%%%%%"
+            )
 
-            print("######################### meter conf for wave items started ######################3")
+            print(
+                "######################### meter conf for wave items started ######################3"
+            )
             all_smart_devices = fetch_smart_energy_devices()
             print(all_smart_devices)
             for devices in all_smart_devices:
@@ -312,25 +349,35 @@ def main():
                 write_csv = write_data_to_wave_items(topic, siteType)
                 # print("write_csv :",write_csv)
 
-            print("%%%%%%%%%%%%%%%%%%%%%% Wave item configuration completed %%%%%%%%%%%%%%%%%%%%%")
+            print(
+                "%%%%%%%%%%%%%%%%%%%%%% Wave item configuration completed %%%%%%%%%%%%%%%%%%%%%"
+            )
 
-            print("###################### mosquitto configuration started #######################33")
+            print(
+                "###################### mosquitto configuration started #######################33"
+            )
             site_id = fetch_site_id()
             print("site_id : ", site_id)
             home_gateway = fetch_home_gateway()
             hgwId = home_gateway.hgw_id
             print("home_gateway", hgwId)
             mosquitto_conf(str(site_id), hgwId)
-            print("%%%%%%%%%%%%%%%%%%%%%%%%%%% mosquitto conf done %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+            print(
+                "%%%%%%%%%%%%%%%%%%%%%%%%%%% mosquitto conf done %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            )
 
-            print("###################### pymodbus configuration started #######################33")
+            print(
+                "###################### pymodbus configuration started #######################33"
+            )
             site_id = fetch_site_id()
             print("site_id : ", site_id)
             home_gateway = fetch_home_gateway()
             hgwId = home_gateway.hgw_id
             print("home_gateway", hgwId)
             pymodbus_conf(str(site_id), hgwId)
-            print("%%%%%%%%%%%%%%%%%%%%%%%%%%% pymodbus configuration conf done %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+            print(
+                "%%%%%%%%%%%%%%%%%%%%%%%%%%% pymodbus configuration conf done %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            )
 
         elif options == 6:  # for reverse ssh configurations
             print("reverse ssh configurations")
@@ -357,10 +404,14 @@ def main():
                     if last != 0:
                         print("deleting topic : ", topic)
                         try:
-                            SmartEnergyDevices.objects.filter(topic=topic.topic).delete()
+                            SmartEnergyDevices.objects.filter(
+                                topic=topic.topic
+                            ).delete()
                             print("topic deleted successfully")
                         except Exception as err:
-                            print("Unable to delete topic : {}".format(topic.topic), err)
+                            print(
+                                "Unable to delete topic : {}".format(topic.topic), err
+                            )
 
         else:
             print("invalid option selected. please choose from above options only")
@@ -368,7 +419,9 @@ def main():
 
 # this function are used for creating and fetching data from the global server (asem1.aviconn.net)
 def create_customer_on_global_cloud(data):
-    customer = requests.post(BASE_URL + "createCustomer/", data=data, headers=SECRET_KEY)
+    customer = requests.post(
+        BASE_URL + "createCustomer/", data=data, headers=SECRET_KEY
+    )
     return customer.json()
 
 
@@ -383,7 +436,9 @@ def create_site_on_global_cloud(data):
 
 
 def fetch_particular_customer_from_global_cloud(data):
-    customer = requests.post(BASE_URL + "fetchParticularCustomer/", data=data, headers=SECRET_KEY)
+    customer = requests.post(
+        BASE_URL + "fetchParticularCustomer/", data=data, headers=SECRET_KEY
+    )
     return customer.json()
 
 
@@ -393,12 +448,16 @@ def fetch_all_sites():
 
 
 def create_aisle_group_for_particular_site(data):
-    aisle_group = requests.post(BASE_URL + "createAisleGroups/", data=data, headers=SECRET_KEY)
+    aisle_group = requests.post(
+        BASE_URL + "createAisleGroups/", data=data, headers=SECRET_KEY
+    )
     return aisle_group.json()
 
 
 def fetch_aisle_groups_for_particular_site(data):
-    aisle_group = requests.get(BASE_URL + "fetchAisleGroups/", data=data, headers=SECRET_KEY)
+    aisle_group = requests.get(
+        BASE_URL + "fetchAisleGroups/", data=data, headers=SECRET_KEY
+    )
     return aisle_group.json()
 
 
@@ -409,12 +468,16 @@ def fetch_last_rssh_port():
 
 
 def create_home_gateway_id_server(data):
-    home_gateway_id = requests.post(BASE_URL + "createHomeGatewayId/", data=data, headers=SECRET_KEY)
+    home_gateway_id = requests.post(
+        BASE_URL + "createHomeGatewayId/", data=data, headers=SECRET_KEY
+    )
     return home_gateway_id.json()
 
 
 def fetch_home_gateway_id(data):
-    home_gateway_id = requests.post(BASE_URL + "fetchHomeGatewayId/", data=data, headers=SECRET_KEY)
+    home_gateway_id = requests.post(
+        BASE_URL + "fetchHomeGatewayId/", data=data, headers=SECRET_KEY
+    )
     return home_gateway_id.json()
 
 
@@ -468,7 +531,9 @@ def write_data_to_wave_items(topic, site_type):
         meter_id = split_topic[3]
         meter_name = "meter" + str(meter_id) + "0"
         register_to_read = 14
-    elif len(split_topic) == 3:  # for supply source status in wh metering only. It tells which source is running
+    elif (
+        len(split_topic) == 3
+    ):  # for supply source status in wh metering only. It tells which source is running
         meter_id = split_topic[2]
         meter_name = "meter" + str(meter_id) + "1"
         register_to_read = 0
@@ -517,7 +582,9 @@ def write_data_to_wave_items(topic, site_type):
         save_to_wave_item_csv(string)
     elif site_type == 1:  # for wh metering
         print("inside wh-metering")
-        if energyType == "1" or energyType == "2" or energyType == "3":  # voltage, current , power
+        if (
+            energyType == "1" or energyType == "2" or energyType == "3"
+        ):  # voltage, current , power
             meter_name = "meter" + str(meter_id) + "0"
             if len(split_topic) == 7:
                 if instance == "1":  # For R-Phase
@@ -655,8 +722,12 @@ def network_conf(wpa_ssid, wpa_psk):
     filePath = "/etc/network/interfaces"
     wpa_ssid = "wpa-ssid " + wpa_ssid
     wpa_psk = "wpa-psk  " + wpa_psk
-    command = "echo odroid | sudo -S sed -i 's/wpa-ssid Aviconn/{}/g' {}".format(wpa_ssid, filePath)
-    command1 = "echo odroid | sudo -S sed -i 's/wpa-psk  Aviconn@32/{}/g' {}".format(wpa_psk, filePath)
+    command = "echo odroid | sudo -S sed -i 's/wpa-ssid Aviconn/{}/g' {}".format(
+        wpa_ssid, filePath
+    )
+    command1 = "echo odroid | sudo -S sed -i 's/wpa-psk  Aviconn@32/{}/g' {}".format(
+        wpa_psk, filePath
+    )
     import os
 
     os.system(command)

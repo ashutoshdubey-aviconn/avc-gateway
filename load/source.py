@@ -90,8 +90,12 @@ def handle_source_message(client, msg, site, msg_type, message):
     )
 
     if source_1_entry.exists():
-        publish_status(client, topictosend, build_source_status_message(source_1_entry.first()))
+        publish_status(
+            client, topictosend, build_source_status_message(source_1_entry.first())
+        )
     if source_2_entry.exists():
-        publish_status(client, topictosend, build_source_status_message(source_2_entry.first()))
+        publish_status(
+            client, topictosend, build_source_status_message(source_2_entry.first())
+        )
 
     return True
