@@ -15,7 +15,11 @@ class RouterHandlerInvocationTests(TestCase):
     def test_handlers_called_for_meter_topic(self):
         # topic parts: /x/y/<site_id>/a/b/METER_ABC
         # Create message with METER in the msg_type to trigger handlers
-        site_id = 1
+        from wareApp.models import Site, User
+
+        user = User.objects.create(username="tester")
+        site = Site.objects.create(site_name="s1", site_type=1, customer=user)
+        site_id = site.id
         topic = f"x/y/z/{site_id}/a/b/METER_ABC"
         msg = DummyMsg(topic, payload=b"123")
 
