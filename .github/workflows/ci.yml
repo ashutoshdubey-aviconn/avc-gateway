@@ -32,9 +32,13 @@ jobs:
           pre-commit run --all-files || true
 
       - name: Run Django system checks
+        env:
+          DJANGO_SETTINGS_MODULE: warehouse.settings_test
         run: |
           python manage.py check
 
       - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: warehouse.settings_test
         run: |
           python manage.py test --verbosity=2
