@@ -1,9 +1,11 @@
+import base64
+
+from django.contrib.auth import authenticate
 from django.core import exceptions
 from rest_framework import serializers
-from .models import User, CustomerInfo, Site
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-import base64
+
+from .models import CustomerInfo, Site, User
 
 
 class TokenSerializer(serializers.ModelSerializer):

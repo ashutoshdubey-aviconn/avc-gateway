@@ -16,7 +16,6 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from wareApp.tasks import mqtt_client1, mqtt_client2
 
 urlpatterns = [
     path("admin/", admin.site.urls),

@@ -1,9 +1,9 @@
 import time
 from datetime import datetime
 
-from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
 from constants.topics import load_data_state_topic
 from utils.payload import build_wattage_load_message
+from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
 
 
 def handle_wattage(client, msg, msg_type, message):

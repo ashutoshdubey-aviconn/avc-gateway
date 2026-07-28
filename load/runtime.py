@@ -1,8 +1,14 @@
 from datetime import datetime
 
-from wareApp.models import HomeGatewayId, MeterReadings, MeterSource, Site, SupplyLoadTimeShare
 from constants.topics import supply_time_state_topic
 from utils.payload import build_supply_time_payload
+from wareApp.models import (
+    HomeGatewayId,
+    MeterReadings,
+    MeterSource,
+    Site,
+    SupplyLoadTimeShare,
+)
 
 
 def handle_load_time(client, msg, site, msg_type, message_for, message, current_time):
@@ -15,9 +21,7 @@ def handle_load_time(client, msg, site, msg_type, message_for, message, current_
             reading_of=message_for,
         )
         if last_load_time_cumulative.exists():
-            previous_load_time_cumulative = float(
-                last_load_time_cumulative[0].previous_reading_value
-            )
+            previous_load_time_cumulative = float(last_load_time_cumulative[0].previous_reading_value)
             if current_load_time_cumulative >= previous_load_time_cumulative:
                 dateHourLowerLimitCheck = current_time.replace(
                     hour=current_time.hour,
@@ -32,14 +36,10 @@ def handle_load_time(client, msg, site, msg_type, message_for, message, current_
                     microsecond=0,
                 )
                 if len(msg_type) > 5 and msg_type[5] == "1":
-                    meter_source = MeterSource.objects.filter(
-                        meter_number=int(msg_type[4])
-                    ).first()
+                    meter_source = MeterSource.objects.filter(meter_number=int(msg_type[4])).first()
                     for_power_source = meter_source.power_source_1 if meter_source else None
                 elif len(msg_type) > 5 and msg_type[5] == "2":
-                    meter_source = MeterSource.objects.filter(
-                        meter_number=int(msg_type[4])
-                    ).first()
+                    meter_source = MeterSource.objects.filter(meter_number=int(msg_type[4])).first()
                     for_power_source = meter_source.power_source_2 if meter_source else None
                 else:
                     return True
@@ -55,9 +55,7 @@ def handle_load_time(client, msg, site, msg_type, message_for, message, current_
                 load_time = current_load_time_cumulative - previous_load_time_cumulative
                 if last_load_time_entry.exists():
                     current = last_load_time_entry[0]
-                    last_load_time_entry.update(
-                        hourly_run_time=current.hourly_run_time + load_time
-                    )
+                    last_load_time_entry.update(hourly_run_time=current.hourly_run_time + load_time)
                     last_load_time_cumulative.update(
                         previous_reading_value=current_load_time_cumulative,
                         updated_on=current_time,

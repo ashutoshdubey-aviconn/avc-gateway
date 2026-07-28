@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 from wareApp.models import (
     AisleGroup,
     DailySiteReading,
@@ -9,9 +7,7 @@ from wareApp.models import (
 )
 
 
-def handle_apparent(
-    client, msg, message_for, msg_type, site, current_time, message, location_id
-):
+def handle_apparent(client, msg, message_for, msg_type, site, current_time, message, location_id):
     if "APPARENT" not in msg_type:
         return False
     try:
@@ -40,13 +36,9 @@ def handle_apparent(
     aisle_grp = AisleGroup.objects.filter(aisle_grp_id=leg_id)
 
     if meter_reading_entry.exists():
-        previous_meter_reading_value = float(
-            meter_reading_entry[0].previous_reading_value
-        )
+        previous_meter_reading_value = float(meter_reading_entry[0].previous_reading_value)
         if incoming_meter_reading >= previous_meter_reading_value:
-            new_unit_consumption = (
-                incoming_meter_reading - previous_meter_reading_value
-            ) / 1000
+            new_unit_consumption = (incoming_meter_reading - previous_meter_reading_value) / 1000
             hourly_entry = HourlySiteReading.objects.filter(
                 associated_Site=int(location_id),
                 leg_id=leg_id,
@@ -59,10 +51,7 @@ def handle_apparent(
                 reading_for=current_time.date(),
             )
             if hourly_entry.exists():
-                hourly_entry.update(
-                    unit_consumption=hourly_entry.first().unit_consumption
-                    + new_unit_consumption
-                )
+                hourly_entry.update(unit_consumption=hourly_entry.first().unit_consumption + new_unit_consumption)
             else:
                 HourlySiteReading.objects.create(
                     associated_Site=site,
@@ -78,10 +67,7 @@ def handle_apparent(
             )
             aisle_grp.update(cumulative_consumption=aisle_grp[0].cumulative_consumption + new_unit_consumption)
             if daily_entry.exists():
-                daily_entry.update(
-                    unit_consumption=daily_entry.first().unit_consumption
-                    + new_unit_consumption
-                )
+                daily_entry.update(unit_consumption=daily_entry.first().unit_consumption + new_unit_consumption)
             else:
                 DailySiteReading.objects.create(
                     associated_Site=site,

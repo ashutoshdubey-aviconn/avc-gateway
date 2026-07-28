@@ -1,8 +1,8 @@
 import os
 import time
 
-from wareApp.models import HomeGatewayId
 from constants.topics import remote_access_state_topic
+from wareApp.models import HomeGatewayId
 
 
 def handle_remote_access(client, msg, message, msg_type):
@@ -16,11 +16,7 @@ def handle_remote_access(client, msg, message, msg_type):
 
     message_parts = message.split("_")
     action = message_parts[0] if message_parts else ""
-    autossh_retry_count = (
-        int(message_parts[1])
-        if len(message_parts) > 1 and message_parts[1].isdigit()
-        else 0
-    )
+    autossh_retry_count = int(message_parts[1]) if len(message_parts) > 1 and message_parts[1].isdigit() else 0
     topicsend = remote_access_state_topic(gw_id.connected_to.id, gw_id.hgw_id)
 
     if action == "start":
@@ -46,38 +42,23 @@ def handle_remote_access(client, msg, message, msg_type):
             os.system(command)
             count += 1
         if count >= autossh_retry_count:
-            Rssh_port_check = (
-                os.popen("netstat -plant | grep " + gw_id.rssh_port)
-                .read()
-                .split("\n")[0]
-            )
+            Rssh_port_check = os.popen("netstat -plant | grep " + gw_id.rssh_port).read().split("\n")[0]
             if len(Rssh_port_check) == 0:
                 Rssh_port_check = "Not in listen mode."
             Rport_status = "Rport_status : " + Rssh_port_check
-            Monitoring_port_check = (
-                os.popen("netstat -plant | grep " + gw_id.monitoring_port)
-                .read()
-                .split("\n")[0]
-            )
+            Monitoring_port_check = os.popen("netstat -plant | grep " + gw_id.monitoring_port).read().split("\n")[0]
             if len(Monitoring_port_check) == 0:
                 Monitoring_port_check = "Not in listen mode."
             Mport_status = "Mport_status : " + Monitoring_port_check
             client.publish(
                 topicsend,
-                "Autossh failed to start on gateway.\n"
-                + Rport_status
-                + "\n"
-                + Mport_status,
+                "Autossh failed to start on gateway.\n" + Rport_status + "\n" + Mport_status,
                 qos=1,
                 retain=False,
             )
             os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
-            os.system(
-                "echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp"
-            )
-            msg = "Rssh and monitoring port restarted for gateway id {}.".format(
-                gw_id.hgw_id
-            )
+            os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
+            msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
             print(msg)
             client.publish(topicsend, msg, qos=1, retain=False)
             return True

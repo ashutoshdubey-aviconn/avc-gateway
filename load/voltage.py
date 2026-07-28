@@ -1,5 +1,5 @@
-from wareApp.models import SiteLoadPower
 from utils.helpers import update_phase_entry
+from wareApp.models import SiteLoadPower
 
 
 def _handle_phase(client, msg, site, msg_type, suffix, required_code):

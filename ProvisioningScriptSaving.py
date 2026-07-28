@@ -1,21 +1,21 @@
-import os
-from prettytable import PrettyTable
 import json
-from datetime import datetime
-import time
+import os
+
+from prettytable import PrettyTable
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wareh.settings")
 import django
 
 django.setup()
 
+import requests
+
 # import project.app.models
 from wareh.wareApp.views import *
-import requests
 
 BASE_URL = "https://asem1.aviconn.in:8005/api/"
 # LOCAL_BASE_URL = "http://localhost:8005/api/"
-SECRET_KEY = {'Content-Type': 'application/json', 'Authorization': 'e$&$xp0gc5wep%95=_s#@+m-s+9pp^*rx%7r+d+$iatu#0opav'}
+SECRET_KEY = {"Content-Type": "application/json", "Authorization": "e$&$xp0gc5wep%95=_s#@+m-s+9pp^*rx%7r+d+$iatu#0opav"}
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
         print("For quit enter 0")
 
         options = int(input("Enter your choice : "))
-        #print("options: ", options)
+        # print("options: ", options)
         if options == 0:
             start = 0
 
@@ -63,8 +63,16 @@ def main():
             elif cust_options == 2:
                 all_customer = fetch_customer_from_global_cloud()
                 for i in all_customer["data"]:
-                    print("customer_id = " + str(i["id"]) + " " + "customer name = " + str(
-                        i["username"]) + " " + "customer email = " + str(i["email"]))
+                    print(
+                        "customer_id = "
+                        + str(i["id"])
+                        + " "
+                        + "customer name = "
+                        + str(i["username"])
+                        + " "
+                        + "customer email = "
+                        + str(i["email"])
+                    )
                 allCustomerIds = [i["id"] for i in all_customer["data"]]
                 print(allCustomerIds)
                 customer_id = int(input("Choose customer id for the site you wanna create"))
@@ -93,10 +101,6 @@ def main():
                     x.add_row([i["id"], i["username"], i["email"]])
                 print(x)
 
-
-
-
-
         elif options == 2:  # For creating new site
             all_customer = fetch_customer_from_global_cloud()
             x = PrettyTable()
@@ -123,7 +127,7 @@ def main():
                 "site_name": site_name,
                 "site_type": site_type,
                 "site_location": location,
-                "customer_id": customer_id
+                "customer_id": customer_id,
             }
             site = create_site_on_global_cloud(json.dumps(site_data))
             print("site", site)
@@ -147,7 +151,7 @@ def main():
             # print("\n")
             site_id = fetch_site_id()
             aisleStart = 1
-            while (aisleStart):
+            while aisleStart:
                 aisle_name = input("Please enter aisle name : ")
                 aisle_data = {
                     "aisle_name": aisle_name,
@@ -170,7 +174,7 @@ def main():
                     aisle_data["power_source"] = power_source
                 aisle = create_aisle_group_for_particular_site(json.dumps(aisle_data))
                 if aisle["status"] == 200:
-                    aisle_data['aisle_id'] = aisle["aisle_id"]
+                    aisle_data["aisle_id"] = aisle["aisle_id"]
                     print("aisle create successfully on cloud server. create on gateway")
                     create_aisle_group(aisle_data)
                     print("1. For continue creating aisle group for above site")
@@ -178,7 +182,6 @@ def main():
                     choice = int(input("Enter from above choice : "))
                     if choice == 2:
                         aisleStart = 0
-
 
         elif options == 4:  # for creating home gateway id
             print("For creating entry for home gateway")
@@ -215,8 +218,10 @@ def main():
             # monitoring_port = (input("enter unique monitoring port "))
             # changes end here .....
             data = {
-                "site_id": site_id, "home_gateway_name": home_gateway_name,
-                "rssh_port": rssh_port, "monitoring_port": monitoring_port
+                "site_id": site_id,
+                "home_gateway_name": home_gateway_name,
+                "rssh_port": rssh_port,
+                "monitoring_port": monitoring_port,
             }
             homeGateway = create_home_gateway_id_server(json.dumps(data))
             print("homegateway", homeGateway)
@@ -244,19 +249,19 @@ def main():
                 # print("2. Warehouse Energy Saving")
                 siteType = fetch_site_type_from_gateway()
                 # location_id = int(input("Enter location id : "))
-                #instance_count = 1
+                # instance_count = 1
                 instance_count = int(input("Enter total number of instance to create : "))
                 meter_id = input("Enter meter id : ")
                 # while total_instance:
                 floor = input("Enter floor type (GF, FF, SF,TF,FF) : ")
                 leg_name = input("Enter leg name : ")
 
-                    # if siteType == 1:
-                    #     energy_type = input(
-                    #         "Enter Energy type (0, Energy), (1, Power), (2, Voltage), (3, Current), (4, Power Factor) : ")
-                    # else:
-                    #     energy_type = input("Enter Energy type (0, Energy), (1, Power), (2, Voltage), (3, Current),"
-                    #                         " (4, Power Factor) : ")
+                # if siteType == 1:
+                #     energy_type = input(
+                #         "Enter Energy type (0, Energy), (1, Power), (2, Voltage), (3, Current), (4, Power Factor) : ")
+                # else:
+                #     energy_type = input("Enter Energy type (0, Energy), (1, Power), (2, Voltage), (3, Current),"
+                #                         " (4, Power Factor) : ")
 
                 if siteType == 1:  # for wh metering
                     for i in range(5):
@@ -267,17 +272,17 @@ def main():
                         print("Smart device entry successfully created")
                 else:
                     for i in range(4):
-                         topic = f"METER_{location_id}_{floor}_{leg_name}_{meter_id}_{instance_count}_{i}"
-                         data = {"topic": topic, "leg_id": aisleId}
-                         smart_device = create_smart_energy_devices(data)
-                         print("Smart device entry successfully created")
+                        topic = f"METER_{location_id}_{floor}_{leg_name}_{meter_id}_{instance_count}_{i}"
+                        data = {"topic": topic, "leg_id": aisleId}
+                        smart_device = create_smart_energy_devices(data)
+                        print("Smart device entry successfully created")
                 # instance_count += 1
                 # total_instance -= 1
 
-                    # print(" Enter 1 to continue for same aisle group, 2 to exit")
-                    # choice = int(input("Enter your choice"))
-                    # if choice == 2:
-                    #     smart_count = 0
+                # print(" Enter 1 to continue for same aisle group, 2 to exit")
+                # choice = int(input("Enter your choice"))
+                # if choice == 2:
+                #     smart_count = 0
                 aisle_choice = input("Enter 1 to create more smart energy devices for different aisle, 2 to exit")
                 if int(aisle_choice) == 2:
                     aisle_counter = 0
@@ -356,7 +361,6 @@ def main():
                         except Exception as err:
                             print("Unable to delete topic : {}".format(topic.topic), err)
 
-
         else:
             print("invalid option selected. please choose from above options only")
 
@@ -399,7 +403,7 @@ def fetch_aisle_groups_for_particular_site(data):
 
 # changes done here on 3 august 2021
 def fetch_last_rssh_port():
-    hwd = requests.get(BASE_URL + 'fetchLastRsshPort/', headers=SECRET_KEY)
+    hwd = requests.get(BASE_URL + "fetchLastRsshPort/", headers=SECRET_KEY)
     return hwd.json()
 
 
@@ -416,30 +420,30 @@ def fetch_home_gateway_id(data):
 def write_data_to_openhab(meterId, site_type):
     if site_type == 2:  # for wh energy saving only
         for i in range(2):
-            meter_name = 'meter' + str(meterId) + str(i)
+            meter_name = "meter" + str(meterId) + str(i)
             if i == 0:
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|2000|12|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|2000|12|{meterId}|PROCOM12|1"
             else:
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1000|32|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1000|32|{meterId}|PROCOM12|1"
             save_to_openhab_csv(string)
     elif site_type == 1:  # for wh metering only
         for i in range(5):
-            meter_name = 'meter' + str(meterId) + str(i)
+            meter_name = "meter" + str(meterId) + str(i)
             if i == 0:
                 # for power, voltage, current, total wattage
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1000|32|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1000|32|{meterId}|PROCOM12|1"
             elif i == 1:
                 # for supply source status
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|long|1000|2|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|long|1000|2|{meterId}|PROCOM12|1"
             elif i == 2:
                 # for mains and dg load time
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|long|2202|4|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|long|2202|4|{meterId}|PROCOM12|1"
             elif i == 3:
                 # for energy and apparent energy
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|2202|6|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|2202|6|{meterId}|PROCOM12|1"
             elif i == 4:
                 # for power factor
-                string = f'{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1054|6|{meterId}|PROCOM12|1'
+                string = f"{meter_name}|/dev/ttyUSB0|9600|8|N|1|rtu|10|holding|float32|1054|6|{meterId}|PROCOM12|1"
             save_to_openhab_whtm_csv(string)
 
 
@@ -453,101 +457,101 @@ def write_data_to_wave_items(topic, site_type):
         energyType = split_topic[6]
     elif len(split_topic) == 6:  # for wh metering, mains and dg load time
         meter_id = split_topic[4]
-        meter_name = 'meter' + str(meter_id) + '2'
+        meter_name = "meter" + str(meter_id) + "2"
         register_to_read = 0
     elif len(split_topic) == 5:  # for apparent energy and energy in wh metering only
         meter_id = split_topic[4]
-        meter_name = 'meter' + str(meter_id) + '3'
+        meter_name = "meter" + str(meter_id) + "3"
         register_to_read = 2
     elif len(split_topic) == 4:  # for total wattage in wh metering only
         meter_id = split_topic[3]
-        meter_name = 'meter' + str(meter_id) + '0'
+        meter_name = "meter" + str(meter_id) + "0"
         register_to_read = 14
     elif len(split_topic) == 3:  # for supply source status in wh metering only. It tells which source is running
         meter_id = split_topic[2]
-        meter_name = 'meter' + str(meter_id) + '1'
+        meter_name = "meter" + str(meter_id) + "1"
         register_to_read = 0
     if site_type == 2:  # for wh energy saving only
         print("inside site type 1 enery-saving")
-        if energyType == '0':
-            meter_name = 'meter' + str(meter_id) + '0'
+        if energyType == "0":
+            meter_name = "meter" + str(meter_id) + "0"
         else:
-            meter_name = 'meter' + str(meter_id) + '1'
+            meter_name = "meter" + str(meter_id) + "1"
         print("meter name : ", meter_name)
-        if instance == '1':  # For R-Phase
+        if instance == "1":  # For R-Phase
             print("instance 1")
             print("energy type :", energyType)
-            if energyType == '0':  # For Energy
+            if energyType == "0":  # For Energy
 
                 register_to_read = 0
-            elif energyType == '1':  # For Power
+            elif energyType == "1":  # For Power
 
                 register_to_read = 6
-            elif energyType == '2':  # For Voltage
+            elif energyType == "2":  # For Voltage
                 register_to_read = 0
-            elif energyType == '3':  # For Current
+            elif energyType == "3":  # For Current
                 register_to_read = 3
             print("register to read ", register_to_read)
-        elif instance == '2':  # For Y-Phase
+        elif instance == "2":  # For Y-Phase
             print("instance 2")
-            if energyType == '0':  # For Energy
+            if energyType == "0":  # For Energy
                 register_to_read = 1
-            elif energyType == '1':  # For Power
+            elif energyType == "1":  # For Power
                 register_to_read = 7
-            elif energyType == '2':  # For Voltage
+            elif energyType == "2":  # For Voltage
                 register_to_read = 1
-            elif energyType == '3':  # For Current
+            elif energyType == "3":  # For Current
                 register_to_read = 4
-        elif instance == '3':  # For B-Phase
+        elif instance == "3":  # For B-Phase
             print("instance 3")
-            if energyType == '0':  # For Energy
+            if energyType == "0":  # For Energy
                 register_to_read = 2
-            elif energyType == '1':  # For Power
+            elif energyType == "1":  # For Power
                 register_to_read = 8
-            elif energyType == '2':  # For Voltage
+            elif energyType == "2":  # For Voltage
                 register_to_read = 2
-            elif energyType == '3':  # For Current
+            elif energyType == "3":  # For Current
                 register_to_read = 5
-        string = f'{meter_name}|{topic}|{register_to_read}|Big|Big'
+        string = f"{meter_name}|{topic}|{register_to_read}|Big|Big"
         save_to_wave_item_csv(string)
     elif site_type == 1:  # for wh metering
         print("inside wh-metering")
-        if energyType == '1' or energyType == '2' or energyType == '3':  # voltage, current , power
-            meter_name = 'meter' + str(meter_id) + '0'
+        if energyType == "1" or energyType == "2" or energyType == "3":  # voltage, current , power
+            meter_name = "meter" + str(meter_id) + "0"
             if len(split_topic) == 7:
-                if instance == '1':  # For R-Phase
-                    if energyType == '1':  # For Power
+                if instance == "1":  # For R-Phase
+                    if energyType == "1":  # For Power
                         register_to_read = 6
-                    elif energyType == '2':  # For Voltage
+                    elif energyType == "2":  # For Voltage
                         register_to_read = 0
-                    elif energyType == '3':  # For Current
+                    elif energyType == "3":  # For Current
                         register_to_read = 3
-                elif instance == '2':  # For Y-Phase
-                    if energyType == '1':  # For Power
+                elif instance == "2":  # For Y-Phase
+                    if energyType == "1":  # For Power
                         register_to_read = 7
-                    elif energyType == '2':  # For Voltage
+                    elif energyType == "2":  # For Voltage
                         register_to_read = 1
-                    elif energyType == '3':  # For Current
+                    elif energyType == "3":  # For Current
                         register_to_read = 4
-                elif instance == '3':  # For B-Phase
-                    if energyType == '1':  # For Power
+                elif instance == "3":  # For B-Phase
+                    if energyType == "1":  # For Power
                         register_to_read = 8
-                    elif energyType == '2':  # For Voltage
+                    elif energyType == "2":  # For Voltage
                         register_to_read = 2
-                    elif energyType == '3':  # For Current
+                    elif energyType == "3":  # For Current
                         register_to_read = 5
-        elif energyType == '0':
-            meter_name = 'meter' + str(meter_id) + '3'
+        elif energyType == "0":
+            meter_name = "meter" + str(meter_id) + "3"
             register_to_read = 1
-        elif energyType == '4':
-            meter_name = 'meter' + str(meter_id) + '4'
-            if instance == '1':
+        elif energyType == "4":
+            meter_name = "meter" + str(meter_id) + "4"
+            if instance == "1":
                 register_to_read = 0
-            elif instance == '2':
+            elif instance == "2":
                 register_to_read = 1
-            elif instance == '3':
+            elif instance == "3":
                 register_to_read = 2
-        string = f'{meter_name}|{topic}|{register_to_read}|Big|Big'
+        string = f"{meter_name}|{topic}|{register_to_read}|Big|Big"
         save_to_wave_item_whtm_csv(string)
 
 
@@ -620,6 +624,7 @@ def mosquitto_conf(siteId, hgwId):
     command = "echo odroid | sudo -S sed -i 's/siteId/{}/g' {}".format(siteId, filePath)
     command1 = "echo odroid | sudo -S sed -i 's/hgwId/{}/g' {}".format(hgwId, filePath)
     import os
+
     os.system(command)
     os.system(command1)
     return
@@ -628,7 +633,7 @@ def mosquitto_conf(siteId, hgwId):
 def reverse_ssh_conf(rssh_port, monitoring_port):
     fin = open("/home/odroid/gateway-latest-code/autossh.sh", "rt")
     data = fin.read()
-    data = data.replace('$rPort', rssh_port).replace('$mPort', monitoring_port)
+    data = data.replace("$rPort", rssh_port).replace("$mPort", monitoring_port)
     fin.close()
     fin = open("/home/odroid/gateway-latest-code/autossh.sh", "wt")
     fin.write(data)
@@ -638,7 +643,7 @@ def reverse_ssh_conf(rssh_port, monitoring_port):
 def pymodbus_conf(siteId, hgwId):
     fin = open("/home/odroid/pymodbus/openhab_script.py", "rt")
     data = fin.read()
-    data = data.replace('$siteId', siteId).replace('$hgwId', hgwId)
+    data = data.replace("$siteId", siteId).replace("$hgwId", hgwId)
     fin.close()
     fin = open("/home/odroid/pymodbus/openhab_script.py", "wt")
     fin.write(data)
@@ -647,11 +652,12 @@ def pymodbus_conf(siteId, hgwId):
 
 def network_conf(wpa_ssid, wpa_psk):
     filePath = "/etc/network/interfaces"
-    wpa_ssid = 'wpa-ssid ' + wpa_ssid
-    wpa_psk = 'wpa-psk  ' + wpa_psk
+    wpa_ssid = "wpa-ssid " + wpa_ssid
+    wpa_psk = "wpa-psk  " + wpa_psk
     command = "echo odroid | sudo -S sed -i 's/wpa-ssid Aviconn/{}/g' {}".format(wpa_ssid, filePath)
     command1 = "echo odroid | sudo -S sed -i 's/wpa-psk  Aviconn@32/{}/g' {}".format(wpa_psk, filePath)
     import os
+
     os.system(command)
     os.system(command1)
     return
@@ -659,4 +665,3 @@ def network_conf(wpa_ssid, wpa_psk):
 
 if __name__ == "__main__":
     main()
-

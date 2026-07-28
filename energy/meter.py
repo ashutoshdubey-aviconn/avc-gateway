@@ -1,18 +1,14 @@
-from datetime import datetime
-
+from constants.topics import consumption_state_topic
+from utils.helpers import publish_status
+from utils.payload import build_consumption_payload
 from wareApp.models import (
     AisleGroup,
     DailySiteReading,
     HomeGatewayId,
     HourlySiteReading,
     MeterReadings,
-    Site,
     SmartEnergyDevices,
 )
-
-from constants.topics import consumption_state_topic
-from utils.helpers import publish_status
-from utils.payload import build_consumption_payload
 
 
 def handle_meter_connection(client, msg, message, message_for, msg_type):
@@ -23,9 +19,7 @@ def handle_meter_connection(client, msg, message, message_for, msg_type):
     return True
 
 
-def handle_meter_energy(
-    client, msg, message, message_for, msg_type, site, current_time
-):
+def handle_meter_energy(client, msg, message, message_for, msg_type, site, current_time):
     if len(msg_type) <= 6 or msg_type[6] != "0":
         return False
     try:
@@ -98,9 +92,7 @@ def handle_meter_energy(
 
     if hourly_entry.exists():
         hourly_object = hourly_entry.first()
-        hourly_entry.update(
-            unit_consumption=hourly_object.unit_consumption + new_unit_consumption
-        )
+        hourly_entry.update(unit_consumption=hourly_object.unit_consumption + new_unit_consumption)
     else:
         HourlySiteReading.objects.create(
             associated_Site=site,
@@ -120,9 +112,7 @@ def handle_meter_energy(
 
     if daily_entry.exists():
         daily_object = daily_entry.first()
-        daily_entry.update(
-            unit_consumption=daily_object.unit_consumption + new_unit_consumption
-        )
+        daily_entry.update(unit_consumption=daily_object.unit_consumption + new_unit_consumption)
     else:
         DailySiteReading.objects.create(
             associated_Site=site,
@@ -134,9 +124,7 @@ def handle_meter_energy(
 
     time_difference_in_readings = 0.0
     if previous_updated_on is not None:
-        time_difference_in_readings = (
-            current_time - previous_updated_on
-        ).total_seconds()
+        time_difference_in_readings = (current_time - previous_updated_on).total_seconds()
 
     payload = build_consumption_payload(time_difference_in_readings, new_unit_consumption)
     publish_status(client, topictosend, payload)

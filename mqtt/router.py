@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from wareApp.models import Site
-from constants.power import PHASE_SUFFIX_MAP
+from energy.apparent_enery import handle_apparent
+from energy.meter import handle_meter_connection, handle_meter_energy
 from gateway.autossh import handle_remote_access
 from gateway.recovery import handle_sync_message
 from load.current import handle_current_message
@@ -10,9 +10,8 @@ from load.runtime import handle_load_time
 from load.source import handle_source_message
 from load.voltage import handle_voltage_message
 from load.wattage import handle_wattage, handle_wattage_load
-from energy.apparent_enery import handle_apparent
-from energy.meter import handle_meter_connection, handle_meter_energy
 from mqtt.topic_parser import normalize_payload, parse_mqtt_topic
+from wareApp.models import Site
 
 
 def route_message(client, msg):
@@ -58,9 +57,7 @@ def route_message(client, msg):
             return
 
     if "METER" in msg_type:
-        handle_meter_energy(
-            client, msg, message, message_for, msg_type, site, current_time
-        )
+        handle_meter_energy(client, msg, message, message_for, msg_type, site, current_time)
 
         if site.site_type == 1:
             if len(msg_type) > 6:
@@ -73,9 +70,7 @@ def route_message(client, msg):
                     handle_power_factor_message(client, msg, site, msg_type)
 
             handle_source_message(client, msg, site, msg_type, message)
-            handle_load_time(
-                client, msg, site, msg_type, message_for, message, current_time
-            )
+            handle_load_time(client, msg, site, msg_type, message_for, message, current_time)
             handle_wattage(client, msg, msg_type, message)
             handle_wattage_load(client, msg, msg_type, message)
             handle_apparent(

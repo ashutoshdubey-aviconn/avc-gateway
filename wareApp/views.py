@@ -1,15 +1,11 @@
-from datetime import timedelta, datetime, time
+from datetime import datetime, time
+
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User, Group
-from django.contrib.sessions.models import Session
-from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets, status
-from rest_framework.views import APIView
-from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
+from django.contrib.auth.models import Group, User
+from rest_framework import viewsets
 from rest_framework.response import Response
+
 from .models import *
 
 # from warehouse.wareApp import sendmail
@@ -40,22 +36,14 @@ def entryExit(aFunc):
 
     def loggedFunc(*args, **kw):
         print("*********************")
-        print(
-            "enter In Function : {} at {} ".format(
-                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
-            )
-        )
+        print("enter In Function : {} at {} ".format(aFunc.__name__, str(time.strftime("%I:%M:%S %p"))))
         try:
             result = aFunc(*args, **kw)
             print("These are the arguments {} and results {}".format(args, result))
         except Exception as e:
             print("exception in {}  and {}".format(aFunc.__name__, e))
 
-        print(
-            "exit from Function : {} at {} ".format(
-                aFunc.__name__, str(time.strftime("%I:%M:%S %p"))
-            )
-        )
+        print("exit from Function : {} at {} ".format(aFunc.__name__, str(time.strftime("%I:%M:%S %p"))))
         print("*********************")
         return result
 

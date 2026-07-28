@@ -1,8 +1,7 @@
-import time
-
 import paho.mqtt.client as mqtt
 from celery.utils.log import get_task_logger
-from constants.mqtt import BROKER_HOST, BROKER_PORT, BROKER_KEEPALIVE, CLIENT1_ID
+
+from constants.mqtt import BROKER_HOST, BROKER_KEEPALIVE, BROKER_PORT, CLIENT1_ID
 from mqtt.router import route_message
 
 logger = get_task_logger(__name__)

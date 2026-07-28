@@ -1,12 +1,10 @@
-from django.contrib.contenttypes.fields import GenericRelation
-from django.db import models
-from django.contrib.auth.models import AbstractUser, Group
-from django.db.models.signals import post_save, pre_save
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser, Group
+from django.db import models
+from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
-from datetime import datetime
-from mptt.models import MPTTModel, TreeForeignKey
 from django_extensions.db.models import TimeStampedModel
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class User(AbstractUser):
@@ -18,15 +16,11 @@ class User(AbstractUser):
         (5, "Cust_Site_Manager"),
     )
     UserType = models.PositiveIntegerField(default=1, choices=user_type)
-    Contact_number = models.CharField(
-        max_length=10, help_text="Enter the 10 digit mobile number"
-    )
+    Contact_number = models.CharField(max_length=10, help_text="Enter the 10 digit mobile number")
 
 
 def Create_Group(sender, instance, *args, **kwargs):
-    if instance._state.adding is True and len(
-        Group.objects.filter(name=instance.get_UserType_display())
-    ):
+    if instance._state.adding is True and len(Group.objects.filter(name=instance.get_UserType_display())):
         print("Group has been created successfully ")
         Group.objects.create(name=instance.get_UserType_display())
 
@@ -56,9 +50,7 @@ class CustomerInfo(models.Model):
         blank=False,
     )
     address = models.CharField(max_length=30, blank=True, null=True)
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, null=True
-    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     total_energy_consumed = models.FloatField(default=0.0)
     total_energy_saved = models.FloatField(default=0.0)
     total_sites = models.PositiveIntegerField(default=0.0)
@@ -71,9 +63,7 @@ class CustomerInfo(models.Model):
 
 
 class Site(models.Model):
-    customer = models.ForeignKey(
-        User, related_name="site", on_delete=models.CASCADE, null=True, blank=True
-    )
+    customer = models.ForeignKey(User, related_name="site", on_delete=models.CASCADE, null=True, blank=True)
     site_name = models.CharField(max_length=20)
     SITE_TYPE = ((1, "WH_Metering"), (2, "WH_Energy_Saving"), (3, "WH_AssetTracking"))
     site_type = models.PositiveIntegerField(choices=SITE_TYPE, null=True, blank=True)
@@ -123,9 +113,7 @@ class HomeGatewayId(models.Model):
         null=True,
     )
     rssh_port = models.CharField(max_length=10, unique=True, blank=True, null=True)
-    monitoring_port = models.CharField(
-        max_length=10, unique=True, blank=True, null=True
-    )
+    monitoring_port = models.CharField(max_length=10, unique=True, blank=True, null=True)
 
     def __unicode__(self):
         return self.hgw_id
@@ -135,9 +123,7 @@ class HomeGatewayId(models.Model):
 
 
 class Image(models.Model):
-    which_site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
+    which_site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     image_file = models.FileField()
     image_id = models.CharField(max_length=10)
 
@@ -238,9 +224,7 @@ class AisleGroup(models.Model):
 
 class AisleInfo(models.Model):
     aisle_name = models.CharField(max_length=100)
-    aisle_group = models.ForeignKey(
-        AisleGroup, on_delete=models.CASCADE, null=True, blank=True
-    )
+    aisle_group = models.ForeignKey(AisleGroup, on_delete=models.CASCADE, null=True, blank=True)
     total_lights = models.IntegerField(blank=True, null=True)
     one_light_watt = models.IntegerField(blank=True, null=True)
     total_number_of_sensors = models.PositiveIntegerField(blank=True, null=True)
@@ -254,12 +238,8 @@ class AisleInfo(models.Model):
 
 
 class HourlySiteReading(models.Model):
-    associated_Site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
-    aisle_group = models.ForeignKey(
-        AisleGroup, on_delete=models.CASCADE, null=True, blank=True
-    )
+    associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
+    aisle_group = models.ForeignKey(AisleGroup, on_delete=models.CASCADE, null=True, blank=True)
     leg_id = models.CharField(max_length=50, null=True, blank=True)
     unit_consumption = models.FloatField(null=True, blank=True)
     reading_from = models.DateTimeField(blank=True, null=True)
@@ -270,12 +250,8 @@ class HourlySiteReading(models.Model):
 
 
 class DailySiteReading(models.Model):
-    associated_Site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
-    aisle_group = models.ForeignKey(
-        AisleGroup, on_delete=models.CASCADE, null=True, blank=True
-    )
+    associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
+    aisle_group = models.ForeignKey(AisleGroup, on_delete=models.CASCADE, null=True, blank=True)
     leg_id = models.CharField(max_length=50, null=True, blank=True)
     unit_consumption = models.FloatField(null=True, blank=True)
     reading_for = models.DateField(default=timezone.now)
@@ -285,9 +261,7 @@ class DailySiteReading(models.Model):
 
 
 class AlarmNotifications(models.Model):
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, blank=True
-    )
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     site_id = models.ForeignKey(Site, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     alarm_type = (
@@ -348,9 +322,7 @@ class OTP(models.Model):
 
 
 class SiteLoadPower(models.Model):
-    Associated_Site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
+    Associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     Site_Total_Load = models.FloatField(blank=True, null=True)
     r_volt = models.FloatField(blank=True, null=True)
     y_volt = models.FloatField(blank=True, null=True)
@@ -406,9 +378,7 @@ class SiteLoadPower(models.Model):
 
 class MeterSource(models.Model):
 
-    Associated_Site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
+    Associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     meter_id = models.PositiveIntegerField(primary_key=True)
     meter_number = models.PositiveIntegerField(null=True, blank=True)
     POWER_SOURCES = (
@@ -419,12 +389,8 @@ class MeterSource(models.Model):
         (4, "DG_4"),
         (5, "DG 5"),
     )
-    power_source_1 = models.PositiveIntegerField(
-        choices=POWER_SOURCES, null=True, blank=True
-    )
-    power_source_2 = models.PositiveIntegerField(
-        choices=POWER_SOURCES, null=True, blank=True
-    )
+    power_source_1 = models.PositiveIntegerField(choices=POWER_SOURCES, null=True, blank=True)
+    power_source_2 = models.PositiveIntegerField(choices=POWER_SOURCES, null=True, blank=True)
     METER_TYPE = ((1, "Single Source"), (2, "Dual Source"))
     meter_type = models.PositiveIntegerField(choices=METER_TYPE, null=True, blank=True)
     is_PS2_valid = models.BooleanField(default=False)
@@ -437,22 +403,14 @@ class MeterSource(models.Model):
 
 
 class SmartEnergyDevices(MPTTModel, TimeStampedModel):
-    associated_site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
+    associated_site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     DEVICE_TYPE = ((1, "METER"), (2, "SENSOR"))
-    device_type = models.PositiveIntegerField(
-        choices=DEVICE_TYPE, null=True, blank=True
-    )  # device type enum
+    device_type = models.PositiveIntegerField(choices=DEVICE_TYPE, null=True, blank=True)  # device type enum
     topic = models.CharField(max_length=100, default="")
     leg_id = models.PositiveIntegerField(null=True, blank=True)
-    associated_aisle_group = models.ForeignKey(
-        AisleGroup, on_delete=models.CASCADE, null=True, blank=True
-    )
+    associated_aisle_group = models.ForeignKey(AisleGroup, on_delete=models.CASCADE, null=True, blank=True)
     ref_reading = models.FloatField(default=0)
-    parent = TreeForeignKey(
-        "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
-    )
+    parent = TreeForeignKey("self", null=True, blank=True, related_name="children", on_delete=models.CASCADE)
     is_other_gw = models.BooleanField(default=False)
     # notification = GenericRelation(AlarmNotifications)
 
@@ -466,9 +424,7 @@ class SmartEnergyDevices(MPTTModel, TimeStampedModel):
 class MeterReadings(models.Model):
     local_meterId = models.PositiveIntegerField(null=True, blank=True)
     reading_type = ((0, "Energy"), (1, "Load_time"), (2, "Sensor"))
-    reading_for = models.PositiveIntegerField(
-        choices=reading_type, null=True, blank=True
-    )
+    reading_for = models.PositiveIntegerField(choices=reading_type, null=True, blank=True)
     reading_of = models.CharField(max_length=100, null=True, blank=True)
     previous_reading_value = models.CharField(max_length=100, null=True, blank=True)
     # cumulative_units = models.PositiveIntegerField(default=0)
@@ -501,9 +457,7 @@ class SupplyLoadTimeShare(models.Model):
 
 
 class LoadData(models.Model):
-    Associated_Site = models.ForeignKey(
-        Site, on_delete=models.CASCADE, null=True, blank=True
-    )
+    Associated_Site = models.ForeignKey(Site, on_delete=models.CASCADE, null=True, blank=True)
     leg_id = models.PositiveIntegerField(null=True, blank=True)
     site_total_load = models.FloatField(blank=True, null=True)
     Meter_Number = models.PositiveIntegerField(null=True, blank=True)
