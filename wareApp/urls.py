@@ -1,12 +1,15 @@
 from django.urls import include, path
 
-# flake8: noqa
-from .views import *  # noqa: F403,F405
+from .views import create_newCustomer
 
-# router = routers.DefaultRouter()
-# router.register('tokens', TokenViewSet)
+# router may be optionally defined in `wareApp.views`; include it if present.
+urlpatterns = []
+try:
+    from .views import router  # type: ignore
 
-urlpatterns = [
-    path("", include(router.urls)),
-    path("createCustomer/", create_newCustomer.as_view()),
-]
+    urlpatterns.append(path("", include(router.urls)))
+except Exception:
+    # router not defined; skip router inclusion
+    pass
+
+urlpatterns.append(path("createCustomer/", create_newCustomer.as_view()))

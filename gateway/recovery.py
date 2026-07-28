@@ -45,13 +45,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
             gw_total_cumulative = AisleGroup.objects.filter(site=site, aisle_grp_id=int(aisle_group_id))[
                 0
             ].cumulative_consumption
-            topictosend1 = (
-                "/Acclivate/iOmniControl/"
-                + str(Site.objects.all()[0].id)
-                + "/"
-                + HomeGatewayId.objects.all()[0].hgw_id
-                + "/in/recovery/dailyConsumption/state"  # noqa: E501
-            )
+            topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/dailyConsumption/state"
 
             while dateHourLastEntry.date() <= sync_date:
                 recovery_dates, daily_unit_consumptions = "", ""
@@ -75,13 +69,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
                 dateHourLastEntry += timedelta(days=1)
 
             logger.info("Now starting delayed recovery for hourly consumption data.")
-            topictosend1 = (
-                "/Acclivate/iOmniControl/"
-                + str(Site.objects.all()[0].id)
-                + "/"
-                + HomeGatewayId.objects.all()[0].hgw_id
-                + "/in/recovery/hourlyConsumption"  # noqa: E501
-            )
+            topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/hourlyConsumption"
             sync_hour = datetime.now()
 
             while sync_hour >= dateHourLastEntryHour:
