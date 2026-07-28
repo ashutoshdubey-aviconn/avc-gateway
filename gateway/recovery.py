@@ -27,7 +27,7 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
             dateHourLastEntry = last_entry_date.replace(hour=last_entry_date_hour)
             dateHourLastEntryHour = dateHourLastEntry
             print(
-                "This message has been received to recover the lost data on the server for {} seconds for aisle group id {}.".format(
+                "This message has been received to recover the lost data on the server for {} seconds for aisle group id {}.".format(  # noqa: E501
                     float(missed_time.split(":")[1]), aisle_group_id
                 )  # noqa: E501
             )
