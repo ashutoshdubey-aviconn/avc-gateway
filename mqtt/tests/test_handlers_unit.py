@@ -52,7 +52,8 @@ class HandlerUnitTests(TestCase):
         )
 
         client = DummyClient()
-        msg_type = ["METER", "x", "x", "x", "0", "1"]
+        # msg_type must include both 'LOAD' and 'TIME' and index 5 should be '1'
+        msg_type = ["METER", "x", "x", "LOAD", "0", "1", "TIME"]
         now = datetime.now()
         res = handle_load_time(client, None, self.site, msg_type, message_for, "20", now)
         self.assertTrue(res)
