@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from typing import Any
 
 from constants.topics import remote_access_state_topic
 from wareApp.models import HomeGatewayId
@@ -8,7 +9,7 @@ from wareApp.models import HomeGatewayId
 logger = logging.getLogger(__name__)
 
 
-def handle_remote_access(client, msg, message, msg_type):
+def handle_remote_access(client: Any, msg: Any, message: str, msg_type: Any) -> bool:
     if "remoteAccess" not in msg_type:
         return False
 

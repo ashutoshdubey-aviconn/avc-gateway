@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Any
 
 from constants.topics import supply_time_state_topic
 from utils.payload import build_supply_time_payload
@@ -14,7 +15,15 @@ from wareApp.models import (
 logger = logging.getLogger(__name__)
 
 
-def handle_load_time(client, msg, site, msg_type, message_for, message, current_time):
+def handle_load_time(
+    client: Any,
+    msg: Any,
+    site: Any,
+    msg_type: Any,
+    message_for: Any,
+    message: Any,
+    current_time: Any,
+) -> bool:
     if "TIME" not in msg_type or "LOAD" not in msg_type:
         return False
     try:

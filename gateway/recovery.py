@@ -15,9 +15,21 @@ from wareApp.models import (
 logger = logging.getLogger(__name__)
 
 
-def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, current_time):
-    if "sync" not in msg_type:
-        return False
+from typing import Any
+
+
+def handle_sync_message(
+    client: Any,
+    msg: Any,
+    message: str,
+    msg_type: Any,
+    msg_subtype: Any,
+    site: Any,
+    current_time: Any = None,
+) -> bool:
+    if current_time is None:
+        current_time = datetime.now()
+    missed_time: Any = 0
 
     if msg_subtype == "consumption":
         try:
@@ -107,12 +119,20 @@ def handle_sync_message(client, msg, message, msg_type, msg_subtype, site, curre
 
     if msg_subtype == "loadTime":
         try:
-            powerSource, missedTime, syncHour = re.search(
-                "Power_source : (.*), Missed_consumption_time_in_secs : (.*), Last_synced_hour : (.*)'",
+            m = re.search(
+                r"Power_source : (.*), Missed_consumption_time_in_secs : (.*), Last_synced_hour : (.*)",
                 message,
-            ).groups()
+            )
+            if m is None:
+                logger.warning("Could not parse sync info: %s", message)
+                return True
+            powerSource, missedTime, syncHour = m.groups()
             power_source = SupplyLoadTimeShare.objects.filter(power_source=int(powerSource))
-            missed_time = float(missedTime)
+            try:
+                missed_time = float(missedTime)
+            except ValueError:
+                logger.warning("Invalid missedTime value: %s", missedTime)
+                missed_time = 0.0
             last_synced_hour = datetime.strptime(syncHour, "%Y-%m-%d %H:%M:%S.%f")
             logger.info("Readings missed on server for %s seconds.", missed_time)
             logger.info(

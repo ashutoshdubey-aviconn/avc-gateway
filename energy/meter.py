@@ -1,3 +1,5 @@
+from typing import Any
+
 from constants.topics import consumption_state_topic
 from utils.helpers import publish_status
 from utils.payload import build_consumption_payload
@@ -11,7 +13,7 @@ from wareApp.models import (
 )
 
 
-def handle_meter_connection(client, msg, message, message_for, msg_type):
+def handle_meter_connection(client: Any, msg: Any, message: Any, message_for: Any, msg_type: Any) -> bool:
     if message not in {"Disconnected", "Connected"}:
         return False
     topictosend = msg.topic.replace("localstate", "state").replace("asem", "Acclivate")
@@ -19,7 +21,15 @@ def handle_meter_connection(client, msg, message, message_for, msg_type):
     return True
 
 
-def handle_meter_energy(client, msg, message, message_for, msg_type, site, current_time):
+def handle_meter_energy(
+    client: Any,
+    msg: Any,
+    message: Any,
+    message_for: Any,
+    msg_type: Any,
+    site: Any,
+    current_time: Any,
+) -> bool:
     if len(msg_type) <= 6 or msg_type[6] != "0":
         return False
     try:

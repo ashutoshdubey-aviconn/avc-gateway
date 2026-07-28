@@ -1,5 +1,8 @@
 import logging
 from datetime import datetime
+from typing import Any
+
+from django.utils import timezone
 
 from energy.apparent_enery import handle_apparent
 from energy.meter import handle_meter_connection, handle_meter_energy
@@ -17,7 +20,7 @@ from wareApp.models import Site
 logger = logging.getLogger(__name__)
 
 
-def route_message(client, msg):
+def route_message(client: Any, msg: Any) -> None:
     logger.debug("MQTT message received: topic=%s payload=%s", msg.topic, msg.payload)
 
     message = normalize_payload(msg.payload)
@@ -33,14 +36,15 @@ def route_message(client, msg):
     if handle_remote_access(client, msg, message, msg_type):
         return
 
-    if handle_sync_message(
+    # Only run sync/recovery handler when a subtype is present (e.g. recovery topics)
+    if msg_subtype is not None and handle_sync_message(
         client,
         msg,
         message,
         msg_type,
         msg_subtype,
-        None if location_id is None else Site.objects.filter(id=location_id).first(),
-        datetime.now(),
+        (None if location_id is None else Site.objects.filter(id=location_id).first()),
+        timezone.now(),
     ):
         return
 
@@ -53,7 +57,8 @@ def route_message(client, msg):
 
     current_time = datetime.now()
 
-    if "meter" in msg_type[0]:
+    # Allow case-insensitive detection of 'meter' prefix in the first msg_type
+    if "meter" in str(msg_type[0]).lower():
         if handle_meter_connection(client, msg, message, message_for, msg_type):
             return
 

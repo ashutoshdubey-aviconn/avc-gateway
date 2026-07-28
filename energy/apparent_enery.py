@@ -1,3 +1,5 @@
+from typing import Any
+
 from wareApp.models import (
     AisleGroup,
     DailySiteReading,
@@ -7,7 +9,16 @@ from wareApp.models import (
 )
 
 
-def handle_apparent(client, msg, message_for, msg_type, site, current_time, message, location_id):
+def handle_apparent(
+    client: Any,
+    msg: Any,
+    message_for: Any,
+    msg_type: Any,
+    site: Any,
+    current_time: Any,
+    message: Any,
+    location_id: Any,
+) -> bool:
     if "APPARENT" not in msg_type:
         return False
     try:

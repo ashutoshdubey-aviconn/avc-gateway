@@ -9,7 +9,10 @@ from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
 logger = logging.getLogger(__name__)
 
 
-def handle_wattage(client, msg, msg_type, message):
+from typing import Any
+
+
+def handle_wattage(client: Any, msg: Any, msg_type: Any, message: Any) -> bool:
     if "WATTAGE" not in msg_type:
         return False
     try:
@@ -27,7 +30,7 @@ def handle_wattage(client, msg, msg_type, message):
     return True
 
 
-def handle_wattage_load(client, msg, msg_type, message):
+def handle_wattage_load(client: Any, msg: Any, msg_type: Any, message: Any) -> bool:
     if "WATTAGELOAD" not in msg_type:
         return False
     try:

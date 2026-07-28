@@ -1,4 +1,7 @@
-def normalize_payload(payload):
+from typing import Any, Dict
+
+
+def normalize_payload(payload: Any) -> str:
     if isinstance(payload, bytes):
         try:
             return payload.decode("utf-8", errors="ignore")
@@ -7,9 +10,9 @@ def normalize_payload(payload):
     return str(payload)
 
 
-def parse_mqtt_topic(topic):
+def parse_mqtt_topic(topic: str) -> Dict[str, Any]:
     parts = topic.split("/")
-    parsed = {
+    parsed: Dict[str, Any] = {
         "parts": parts,
         "location_id": None,
         "message_for": None,

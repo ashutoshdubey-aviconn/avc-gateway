@@ -6,7 +6,10 @@ from wareApp.models import SiteLoadPower
 logger = logging.getLogger(__name__)
 
 
-def _handle_phase(client, msg, site, msg_type, suffix, required_code):
+from typing import Any
+
+
+def _handle_phase(client: Any, msg: Any, site: Any, msg_type: Any, suffix: str, required_code: str) -> bool:
     if len(msg_type) <= 6 or msg_type[6] != required_code:
         return False
     entry = SiteLoadPower.objects.filter(
@@ -21,5 +24,5 @@ def _handle_phase(client, msg, site, msg_type, suffix, required_code):
     return True
 
 
-def handle_power_factor_message(client, msg, site, msg_type):
+def handle_power_factor_message(client: Any, msg: Any, site: Any, msg_type: Any) -> bool:
     return _handle_phase(client, msg, site, msg_type, "power_factor", "4")

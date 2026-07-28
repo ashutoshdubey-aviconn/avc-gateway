@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Any
 
 
-def build_source_status_message(entry):
+def build_source_status_message(entry: Any) -> Any:
     return (
         "Total_load :"
         + str(entry.Site_Total_Load)
@@ -34,7 +35,7 @@ def build_source_status_message(entry):
     )
 
 
-def build_wattage_load_message(load_power, leg_id, meter_number, created, epoch_time):
+def build_wattage_load_message(load_power: Any, leg_id: Any, meter_number: Any, created: Any, epoch_time: Any) -> Any:
     return (
         "LoadValue :"
         + str(load_power)
@@ -49,7 +50,9 @@ def build_wattage_load_message(load_power, leg_id, meter_number, created, epoch_
     )
 
 
-def build_supply_time_payload(power_source, load_time, current_load_time_cumulative, created):
+def build_supply_time_payload(
+    power_source: Any, load_time: Any, current_load_time_cumulative: Any, created: Any
+) -> Any:
     return (
         "Supply_Source :"
         + str(power_source)
@@ -62,7 +65,7 @@ def build_supply_time_payload(power_source, load_time, current_load_time_cumulat
     )
 
 
-def build_consumption_payload(time_difference_in_readings, new_unit_consumption):
+def build_consumption_payload(time_difference_in_readings: Any, new_unit_consumption: Any) -> Any:
     return (
         "Consumption_time_in_sec :"
         + str(time_difference_in_readings)

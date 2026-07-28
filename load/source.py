@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
@@ -6,7 +7,7 @@ from utils.payload import build_source_status_message
 from wareApp.models import HomeGatewayId, MeterSource, Site, SiteLoadPower
 
 
-def handle_source_message(client, msg, site, msg_type, message):
+def handle_source_message(client: Any, msg: Any, site: Any, msg_type: Any, message: Any) -> bool:
     if "SOURCE" not in msg_type:
         return False
 

@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Any, Optional
 
 
-def publish_status(client, topic: str, message: str) -> None:
+def publish_status(client: Any, topic: str, message: str) -> None:
     if topic and message is not None:
         client.publish(topic, message, qos=0, retain=False)
 
@@ -14,7 +14,7 @@ def phase_attribute(phase_index: str, suffix: str) -> Optional[str]:
     return f"{prefix}{suffix}"
 
 
-def update_phase_entry(entry_qs, phase_index: str, suffix: str, payload) -> Optional[float]:
+def update_phase_entry(entry_qs: Any, phase_index: str, suffix: str, payload: Any) -> Optional[float]:
     field = phase_attribute(phase_index, suffix)
     if field is None:
         return None
