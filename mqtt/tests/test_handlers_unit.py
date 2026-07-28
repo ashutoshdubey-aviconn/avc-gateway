@@ -48,7 +48,12 @@ class HandlerUnitTests(TestCase):
         message_for = "meter/topic/1"
         MeterReadings.objects.create(reading_for=1, reading_of=message_for, previous_reading_value="10")
         MeterSource.objects.create(
-            meter_id=2, meter_number=0, power_source_1=0, meter_type=1, is_PS2_valid=False, Associated_Site=self.site
+            meter_id=2,
+            meter_number=0,
+            power_source_1=0,
+            meter_type=1,
+            is_PS2_valid=False,
+            Associated_Site=self.site,
         )
 
         client = DummyClient()
@@ -57,6 +62,17 @@ class HandlerUnitTests(TestCase):
         now = datetime.now()
         res = handle_load_time(client, None, self.site, msg_type, message_for, "20", now)
         self.assertTrue(res)
+        # Verify SupplyLoadTimeShare was created with expected hourly_run_time
+        from wareApp.models import MeterReadings, SupplyLoadTimeShare
+
+        # load_time = 20 - 10 = 10
+        shares = SupplyLoadTimeShare.objects.filter(site=self.site)
+        self.assertTrue(shares.exists())
+        self.assertAlmostEqual(float(shares.first().hourly_run_time), 10.0, places=3)
+        # Verify MeterReadings was updated to new previous_reading_value
+        mr = MeterReadings.objects.filter(reading_of=message_for).first()
+        self.assertIsNotNone(mr)
+        self.assertAlmostEqual(float(mr.previous_reading_value), 20.0, places=3)
 
     def test_handle_wattage_updates_site_load_power(self):
         from load.wattage import handle_wattage
@@ -96,3 +112,16 @@ class HandlerUnitTests(TestCase):
         msg_type = ["METER", "x", "x", "x", "0", "APPARENT"]
         res = handle_apparent(client, None, message_for, msg_type, self.site, now, "20", str(self.site.id))
         self.assertTrue(res)
+        # Verify HourlySiteReading created and MeterReadings/AisleGroup updated
+        from wareApp.models import AisleGroup, HourlySiteReading, MeterReadings
+
+        hourly = HourlySiteReading.objects.filter(associated_Site=self.site, leg_id=9)
+        self.assertTrue(hourly.exists())
+        # new_unit_consumption = (20 - 10) / 1000 = 0.01
+        self.assertAlmostEqual(float(hourly.first().unit_consumption), 0.01, places=6)
+        mr = MeterReadings.objects.filter(reading_of=message_for).first()
+        self.assertIsNotNone(mr)
+        self.assertAlmostEqual(float(mr.previous_reading_value), 20.0, places=3)
+        aisle = AisleGroup.objects.filter(site=self.site, aisle_grp_id=9).first()
+        self.assertIsNotNone(aisle)
+        self.assertAlmostEqual(float(aisle.cumulative_consumption), 0.01, places=6)
