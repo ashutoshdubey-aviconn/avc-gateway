@@ -9,6 +9,9 @@ Priority 1 — Required for Django 5 upgrade and production hardening
 - [ ] Replace all `from ... import *` occurrences with explicit imports (start with `wareApp`).
 - [ ] Audit and remove `# noqa` suppressions where possible.
 - [ ] Add unit tests for MQTT routing and handlers.
+ - [x] Replace all `from ... import *` occurrences with explicit imports (start with `wareApp`).
+ - [x] Audit and remove `# noqa` suppressions where possible (project-level).
+ - [x] Add unit tests for MQTT routing and handlers.
  - [x] Replace all `from ... import *` occurrences with explicit imports in `wareApp/admin.py` and `wareApp/views.py`.
  - [ ] Audit and remove `# noqa` suppressions where possible.
  - [ ] Add unit tests for MQTT routing and handlers.
@@ -25,6 +28,7 @@ Priority 2 — Django 5 upgrade steps
 
 Priority 3 — Productivity, packaging & CI
 - [ ] Add GitHub Actions workflow to run pre-commit, flake8, and tests on PRs.
+ - [x] Add GitHub Actions workflow to run pre-commit, flake8, and tests on PRs.
 - [ ] Add `Dockerfile` and `docker-compose.yml` for integration testing (Postgres, RabbitMQ/Redis, Mosquitto).
 - [ ] Add `mypy` gradually and add type hints for public functions.
 
