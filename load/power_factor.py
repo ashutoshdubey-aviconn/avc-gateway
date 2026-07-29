@@ -1,12 +1,11 @@
 import logging
 
+import paho.mqtt.client as mqtt
+
 from utils.helpers import update_phase_entry
 from wareApp.models import Site, SiteLoadPower
 
 logger = logging.getLogger(__name__)
-
-
-import paho.mqtt.client as mqtt
 
 
 def _handle_phase(

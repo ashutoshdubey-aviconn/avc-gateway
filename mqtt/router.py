@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 import paho.mqtt.client as mqtt
 from django.utils import timezone
@@ -55,14 +54,15 @@ def route_message(client: mqtt.Client, msg: mqtt.MQTTMessage) -> None:
         return
 
     # Cache site lookup to avoid repeated DB queries
-    site_obj: Optional[Site] = None
+    site_obj: Site | None = None
     if location_id is not None:
         site_obj = Site.objects.filter(id=location_id).first()
 
     # Only run sync/recovery handler when a subtype is present (e.g. recovery topics)
-    if msg_subtype is not None:
-        if handle_sync_message(client, msg, message, msg_type, msg_subtype, site_obj, timezone.now()):
-            return
+    if msg_subtype is not None and handle_sync_message(
+        client, msg, message, msg_type, msg_subtype, site_obj, timezone.now()
+    ):
+        return
 
     if site_obj is None or message_for is None:
         return
@@ -71,7 +71,7 @@ def route_message(client: mqtt.Client, msg: mqtt.MQTTMessage) -> None:
 
     # Allow case-insensitive detection of 'meter' prefix in the first msg_type
     first_type_lower = str(msg_type[0]).lower() if msg_type else ""
-    if "meter" in first_type_lower:
+    if "meter" in first_type_lower:  # noqa: SIM102
         if handle_meter_connection(client, msg, message, message_for, msg_type):
             return
 

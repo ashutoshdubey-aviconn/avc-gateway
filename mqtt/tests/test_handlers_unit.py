@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timezone
 
 from django.test import TestCase
 
@@ -63,7 +63,7 @@ class HandlerUnitTests(TestCase):
         client = DummyClient()
         # msg_type must include both 'LOAD' and 'TIME' and index 5 should be '1'
         msg_type = ["METER", "x", "x", "LOAD", "0", "1", "TIME"]
-        now = datetime.now()
+        now = timezone.now()
         res = handle_load_time(client, None, self.site, msg_type, message_for, "20", now)
         self.assertTrue(res)
         # Verify SupplyLoadTimeShare was created with expected hourly_run_time
@@ -118,7 +118,7 @@ class HandlerUnitTests(TestCase):
         MeterReadings.objects.create(reading_for=0, reading_of=message_for, previous_reading_value="10")
 
         client = DummyClient()
-        now = datetime.now()
+        now = timezone.now()
         msg_type = ["METER", "x", "x", "x", "0", "APPARENT"]
         res = handle_apparent(client, None, message_for, msg_type, self.site, now, "20", str(self.site.id))
         self.assertTrue(res)

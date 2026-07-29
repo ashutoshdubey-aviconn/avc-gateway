@@ -1,18 +1,12 @@
 import logging
 from datetime import datetime
-from typing import Optional
 
 import paho.mqtt.client as mqtt
+from django.utils import timezone
 
 from constants.topics import supply_time_state_topic
 from utils.payload import build_supply_time_payload
-from wareApp.models import (
-    HomeGatewayId,
-    MeterReadings,
-    MeterSource,
-    Site,
-    SupplyLoadTimeShare,
-)
+from wareApp.models import MeterReadings, MeterSource, Site, SupplyLoadTimeShare
 
 logger = logging.getLogger(__name__)
 
@@ -86,11 +80,15 @@ def handle_load_time(
                         previous_reading_value=current_load_time_cumulative,
                         updated_on=current_time,
                     )
-                created = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-                topictosend = supply_time_state_topic(
-                    Site.objects.all()[0].id,
-                    HomeGatewayId.objects.first().hgw_id,
-                )
+                created = timezone.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+                from utils.helpers import get_default_site_id, get_home_gateway_hgw_id
+
+                site_id_cached = get_default_site_id()
+                gw_hgw_id = get_home_gateway_hgw_id()
+                if site_id_cached is None or gw_hgw_id is None:
+                    logger.warning("Missing site or gateway id for supply_time_state_topic")
+                    return True
+                topictosend = supply_time_state_topic(site_id_cached, gw_hgw_id)
                 msg_payload = build_supply_time_payload(
                     for_power_source,
                     load_time,
@@ -104,7 +102,7 @@ def handle_load_time(
                 reading_for=1,
                 reading_of=message_for,
                 previous_reading_value=message,
-                updated_on=datetime.now(),
+                updated_on=timezone.now(),
             )
     except Exception as e:
         logger.exception("Exception in load time block: %s", e)

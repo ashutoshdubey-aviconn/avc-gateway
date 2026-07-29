@@ -23,9 +23,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="User",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("password", models.CharField(max_length=128, verbose_name="password")),
-                ("last_login", models.DateTimeField(blank=True, null=True, verbose_name="last login")),
+                (
+                    "last_login",
+                    models.DateTimeField(blank=True, null=True, verbose_name="last login"),
+                ),
                 (
                     "is_superuser",
                     models.BooleanField(
@@ -45,9 +56,18 @@ class Migration(migrations.Migration):
                         verbose_name="username",
                     ),
                 ),
-                ("first_name", models.CharField(blank=True, max_length=30, verbose_name="first name")),
-                ("last_name", models.CharField(blank=True, max_length=150, verbose_name="last name")),
-                ("email", models.EmailField(blank=True, max_length=254, verbose_name="email address")),
+                (
+                    "first_name",
+                    models.CharField(blank=True, max_length=30, verbose_name="first name"),
+                ),
+                (
+                    "last_name",
+                    models.CharField(blank=True, max_length=150, verbose_name="last name"),
+                ),
+                (
+                    "email",
+                    models.EmailField(blank=True, max_length=254, verbose_name="email address"),
+                ),
                 (
                     "is_staff",
                     models.BooleanField(
@@ -64,7 +84,10 @@ class Migration(migrations.Migration):
                         verbose_name="active",
                     ),
                 ),
-                ("date_joined", models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined")),
+                (
+                    "date_joined",
+                    models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined"),
+                ),
                 (
                     "UserType",
                     models.PositiveIntegerField(
@@ -78,7 +101,10 @@ class Migration(migrations.Migration):
                         default=1,
                     ),
                 ),
-                ("Contact_number", models.CharField(help_text="Enter the 10 digit mobile number", max_length=10)),
+                (
+                    "Contact_number",
+                    models.CharField(help_text="Enter the 10 digit mobile number", max_length=10),
+                ),
                 (
                     "groups",
                     models.ManyToManyField(
@@ -114,7 +140,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="AisleGroup",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("aisle_grp_id", models.PositiveIntegerField(blank=True, null=True)),
                 ("aisleGroupName", models.CharField(max_length=100)),
                 ("total_lights", models.IntegerField(blank=True, null=True)),
@@ -126,7 +160,14 @@ class Migration(migrations.Migration):
                 (
                     "power_source",
                     models.PositiveIntegerField(
-                        choices=[(0, "MAINS SUPPLY"), (1, "DG 1"), (2, "DG 2"), (3, "DG 3"), (4, "DG 4"), (5, "DG 5")],
+                        choices=[
+                            (0, "MAINS SUPPLY"),
+                            (1, "DG 1"),
+                            (2, "DG 2"),
+                            (3, "DG 3"),
+                            (4, "DG 4"),
+                            (5, "DG 5"),
+                        ],
                         default=0,
                     ),
                 ),
@@ -135,16 +176,30 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="AisleInfo",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("aisle_name", models.CharField(max_length=100)),
                 ("total_lights", models.IntegerField(blank=True, null=True)),
                 ("one_light_watt", models.IntegerField(blank=True, null=True)),
-                ("total_number_of_sensors", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "total_number_of_sensors",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
                 ("is_active", models.BooleanField(default=True)),
                 (
                     "aisle_group",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
                     ),
                 ),
             ],
@@ -152,7 +207,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="BlockInfo",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("block_name", models.CharField(max_length=10)),
                 ("is_active", models.BooleanField()),
             ],
@@ -160,7 +223,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="CustomerInfo",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("address", models.CharField(blank=True, max_length=30, null=True)),
                 ("total_energy_consumed", models.FloatField(default=0.0)),
                 ("total_energy_saved", models.FloatField(default=0.0)),
@@ -168,7 +239,10 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
@@ -184,23 +258,47 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="MeterReadings",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("local_meterId", models.PositiveIntegerField(blank=True, null=True)),
                 (
                     "reading_for",
                     models.PositiveIntegerField(
-                        blank=True, choices=[(0, "Energy"), (1, "Load_time"), (2, "Sensor")], null=True
+                        blank=True,
+                        choices=[(0, "Energy"), (1, "Load_time"), (2, "Sensor")],
+                        null=True,
                     ),
                 ),
                 ("reading_of", models.CharField(blank=True, max_length=100, null=True)),
-                ("previous_reading_value", models.CharField(blank=True, max_length=100, null=True)),
-                ("updated_on", models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 312140))),
+                (
+                    "previous_reading_value",
+                    models.CharField(blank=True, max_length=100, null=True),
+                ),
+                (
+                    "updated_on",
+                    models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 312140)),
+                ),
             ],
         ),
         migrations.CreateModel(
             name="OTP",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("otp", models.CharField(blank=True, max_length=5, null=True)),
                 ("user_id", models.PositiveIntegerField(default=0)),
                 ("created", models.DateTimeField(auto_now_add=True)),
@@ -209,37 +307,72 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="SensorData",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("sensor_id", models.CharField(max_length=10)),
                 ("sensor_status", models.BooleanField()),
                 ("sensor_on_date_time", models.DateTimeField()),
                 ("sensor_off_date_time", models.DateTimeField()),
                 (
                     "sensor_associated_with",
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
+                    ),
                 ),
             ],
         ),
         migrations.CreateModel(
             name="Site",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("site_name", models.CharField(max_length=20)),
                 (
                     "site_type",
                     models.PositiveIntegerField(
                         blank=True,
-                        choices=[(1, "WH_Metering"), (2, "WH_Energy_Saving"), (3, "WH_AssetTracking")],
+                        choices=[
+                            (1, "WH_Metering"),
+                            (2, "WH_Energy_Saving"),
+                            (3, "WH_AssetTracking"),
+                        ],
                         null=True,
                     ),
                 ),
-                ("total_no_of_blocks", models.PositiveIntegerField(blank=True, null=True)),
-                ("total_no_of_aisles", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "total_no_of_blocks",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "total_no_of_aisles",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
                 ("location", models.CharField(blank=True, max_length=20, null=True)),
                 ("per_unit_cost", models.FloatField(blank=True, null=True)),
                 ("genset_unit_rate", models.FloatField(blank=True, null=True)),
-                ("no_of_single_source_meters", models.PositiveIntegerField(blank=True, null=True)),
-                ("no_of_dual_source_meters", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "no_of_single_source_meters",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
+                (
+                    "no_of_dual_source_meters",
+                    models.PositiveIntegerField(blank=True, null=True),
+                ),
                 ("is_active", models.BooleanField(default=False)),
                 ("is_visible", models.BooleanField(default=False)),
                 ("live_date", models.DateTimeField(blank=True, null=True)),
@@ -272,21 +405,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="SupplyLoadTimeShare",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "power_source",
                     models.PositiveSmallIntegerField(
-                        choices=[(0, "MAINS SUPPLY"), (1, "DG 1"), (2, "DG 2"), (3, "DG 3"), (4, "DG 4"), (5, "DG 5")],
+                        choices=[
+                            (0, "MAINS SUPPLY"),
+                            (1, "DG 1"),
+                            (2, "DG 2"),
+                            (3, "DG 3"),
+                            (4, "DG 4"),
+                            (5, "DG 5"),
+                        ],
                         default=0,
                     ),
                 ),
                 ("hourly_run_time", models.IntegerField(default=0)),
-                ("reading_from", models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 315271))),
-                ("reading_to", models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 315439))),
+                (
+                    "reading_from",
+                    models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 315271)),
+                ),
+                (
+                    "reading_to",
+                    models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 315439)),
+                ),
                 (
                     "site",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="supply", to="wareApp.Site"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="supply",
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -294,7 +450,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="SmartEnergyDevices",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "created",
                     django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name="created"),
@@ -318,13 +482,19 @@ class Migration(migrations.Migration):
                 (
                     "associated_aisle_group",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
                     ),
                 ),
                 (
                     "associated_site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
                 (
@@ -345,23 +515,63 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="SiteStaticData",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("total_lights", models.PositiveIntegerField()),
                 ("total_watts", models.CharField(max_length=100)),
                 (
                     "aisle_group",
-                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"),
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
+                    ),
                 ),
-                ("aisle_id", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleInfo")),
-                ("block_id", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.BlockInfo")),
-                ("sensor_id", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.SensorData")),
-                ("site_id", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site")),
+                (
+                    "aisle_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleInfo",
+                    ),
+                ),
+                (
+                    "block_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.BlockInfo",
+                    ),
+                ),
+                (
+                    "sensor_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.SensorData",
+                    ),
+                ),
+                (
+                    "site_id",
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"),
+                ),
             ],
         ),
         migrations.CreateModel(
             name="SiteLoadPower",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("Site_Total_Load", models.FloatField(blank=True, null=True)),
                 ("r_volt", models.FloatField(blank=True, null=True)),
                 ("y_volt", models.FloatField(blank=True, null=True)),
@@ -372,14 +582,20 @@ class Migration(migrations.Migration):
                 ("r_power_factor", models.FloatField(blank=True, null=True)),
                 ("y_power_factor", models.FloatField(blank=True, null=True)),
                 ("b_power_factor", models.FloatField(blank=True, null=True)),
-                ("Supply_Source", models.CharField(blank=True, max_length=20, null=True)),
+                (
+                    "Supply_Source",
+                    models.CharField(blank=True, max_length=20, null=True),
+                ),
                 ("Meter_Number", models.PositiveIntegerField(blank=True, null=True)),
                 ("Status", models.CharField(blank=True, max_length=10, null=True)),
                 ("Updated_on", models.DateTimeField(blank=True, null=True)),
                 (
                     "Associated_Site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -387,12 +603,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Panel",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("panel", models.CharField(blank=True, max_length=50, null=True)),
                 (
                     "site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -400,7 +627,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="MonthlyEnergySaving",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("monthly_saving", models.FloatField(blank=True, null=True)),
                 ("percentage_monthly_saving", models.FloatField(blank=True, null=True)),
                 ("total_saving_till_date", models.FloatField(blank=True, null=True)),
@@ -408,7 +643,10 @@ class Migration(migrations.Migration):
                 (
                     "site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -416,13 +654,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="MeterSource",
             fields=[
-                ("meter_id", models.PositiveIntegerField(primary_key=True, serialize=False)),
+                (
+                    "meter_id",
+                    models.PositiveIntegerField(primary_key=True, serialize=False),
+                ),
                 ("meter_number", models.PositiveIntegerField(blank=True, null=True)),
                 (
                     "power_source_1",
                     models.PositiveIntegerField(
                         blank=True,
-                        choices=[(0, "Mains Supply"), (1, "DG_1"), (2, "DG_2"), (3, "DG_3"), (4, "DG_4"), (5, "DG 5")],
+                        choices=[
+                            (0, "Mains Supply"),
+                            (1, "DG_1"),
+                            (2, "DG_2"),
+                            (3, "DG_3"),
+                            (4, "DG_4"),
+                            (5, "DG 5"),
+                        ],
                         null=True,
                     ),
                 ),
@@ -430,21 +678,33 @@ class Migration(migrations.Migration):
                     "power_source_2",
                     models.PositiveIntegerField(
                         blank=True,
-                        choices=[(0, "Mains Supply"), (1, "DG_1"), (2, "DG_2"), (3, "DG_3"), (4, "DG_4"), (5, "DG 5")],
+                        choices=[
+                            (0, "Mains Supply"),
+                            (1, "DG_1"),
+                            (2, "DG_2"),
+                            (3, "DG_3"),
+                            (4, "DG_4"),
+                            (5, "DG 5"),
+                        ],
                         null=True,
                     ),
                 ),
                 (
                     "meter_type",
                     models.PositiveIntegerField(
-                        blank=True, choices=[(1, "Single Source"), (2, "Dual Source")], null=True
+                        blank=True,
+                        choices=[(1, "Single Source"), (2, "Dual Source")],
+                        null=True,
                     ),
                 ),
                 ("is_PS2_valid", models.BooleanField(default=False)),
                 (
                     "Associated_Site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -452,7 +712,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="LoadData",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("leg_id", models.PositiveIntegerField(blank=True, null=True)),
                 ("site_total_load", models.FloatField(blank=True, null=True)),
                 ("Meter_Number", models.PositiveIntegerField(blank=True, null=True)),
@@ -461,7 +729,10 @@ class Migration(migrations.Migration):
                 (
                     "Associated_Site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -469,13 +740,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Image",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("image_file", models.FileField(upload_to="")),
                 ("image_id", models.CharField(max_length=10)),
                 (
                     "which_site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -483,7 +765,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="HourlySiteReading",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("leg_id", models.CharField(blank=True, max_length=50, null=True)),
                 ("unit_consumption", models.FloatField(blank=True, null=True)),
                 ("reading_from", models.DateTimeField(blank=True, null=True)),
@@ -491,13 +781,19 @@ class Migration(migrations.Migration):
                 (
                     "aisle_group",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
                     ),
                 ),
                 (
                     "associated_Site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -505,10 +801,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="HomeGatewayId",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("hgw_id", models.CharField(max_length=200)),
-                ("rssh_port", models.CharField(blank=True, max_length=10, null=True, unique=True)),
-                ("monitoring_port", models.CharField(blank=True, max_length=10, null=True, unique=True)),
+                (
+                    "rssh_port",
+                    models.CharField(blank=True, max_length=10, null=True, unique=True),
+                ),
+                (
+                    "monitoring_port",
+                    models.CharField(blank=True, max_length=10, null=True, unique=True),
+                ),
                 (
                     "connected_to",
                     models.ForeignKey(
@@ -534,7 +844,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Floor",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "floor",
                     models.CharField(
@@ -554,7 +872,10 @@ class Migration(migrations.Migration):
                 (
                     "site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -562,20 +883,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="DailySiteReading",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("leg_id", models.CharField(blank=True, max_length=50, null=True)),
                 ("unit_consumption", models.FloatField(blank=True, null=True)),
-                ("reading_for", models.DateField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 273755))),
+                (
+                    "reading_for",
+                    models.DateField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 273755)),
+                ),
                 (
                     "aisle_group",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.AisleGroup"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.AisleGroup",
                     ),
                 ),
                 (
                     "associated_Site",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wareApp.Site",
                     ),
                 ),
             ],
@@ -584,13 +922,24 @@ class Migration(migrations.Migration):
             model_name="blockinfo",
             name="site_id",
             field=models.ForeignKey(
-                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="wareApp.Site",
             ),
         ),
         migrations.CreateModel(
             name="AlarmNotifications",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("object_id", models.PositiveIntegerField()),
                 (
                     "Alarm_type",
@@ -608,19 +957,34 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("create_DateTime", models.DateTimeField(auto_now_add=True)),
-                ("Alarm_priority", models.PositiveIntegerField(choices=[(0, "Normal"), (1, "High")], default=0)),
-                ("actual_created", models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 278059))),
+                (
+                    "Alarm_priority",
+                    models.PositiveIntegerField(choices=[(0, "Normal"), (1, "High")], default=0),
+                ),
+                (
+                    "actual_created",
+                    models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 278059)),
+                ),
                 ("to_do", models.CharField(blank=True, max_length=200, null=True)),
-                ("off_time", models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 278415))),
+                (
+                    "off_time",
+                    models.DateTimeField(default=datetime.datetime(2024, 7, 29, 14, 34, 36, 278415)),
+                ),
                 ("cloud_time", models.DateTimeField(auto_now_add=True)),
                 ("is_active", models.BooleanField(default=True)),
                 (
                     "created_by",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
-                ("site_id", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site")),
+                (
+                    "site_id",
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"),
+                ),
             ],
         ),
         migrations.AddField(
@@ -642,7 +1006,10 @@ class Migration(migrations.Migration):
             model_name="aislegroup",
             name="site",
             field=models.ForeignKey(
-                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="wareApp.Site"
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="wareApp.Site",
             ),
         ),
     ]

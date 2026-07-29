@@ -64,7 +64,7 @@ def handle_remote_access(client: mqtt.Client, msg: mqtt.MQTTMessage, message: st
             )
             os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
             os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
-            payload_msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
+            payload_msg = f"Rssh and monitoring port restarted for gateway id {gw_id.hgw_id}."
             logger.warning(payload_msg)
             client.publish(topicsend, payload_msg, qos=1, retain=False)
             return True

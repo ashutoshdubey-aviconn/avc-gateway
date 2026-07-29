@@ -1,13 +1,12 @@
 import logging
 import time
 from datetime import datetime
-from typing import Optional
 
 import paho.mqtt.client as mqtt
 
 from constants.topics import load_data_state_topic
 from utils.payload import build_wattage_load_message
-from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
+from wareApp.models import LoadData, Site, SiteLoadPower
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ def handle_wattage(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: list[st
     if "WATTAGE" not in msg_type:
         return False
     try:
-        site = Site.objects.all()[0]
+        site = Site.objects.first()
         load_power = float(message)
         load_entry = SiteLoadPower.objects.filter(
             Associated_Site=site,
@@ -34,7 +33,7 @@ def handle_wattage_load(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: li
     if "WATTAGELOAD" not in msg_type:
         return False
     try:
-        site = Site.objects.all()[0]
+        site = Site.objects.first()
         load_power = float(message)
         time_now = datetime.now()
         epochTime = round(time.time() * 1000)
@@ -50,10 +49,13 @@ def handle_wattage_load(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: li
             Updated_on=time_now,
             epochTime=epochTime,
         )
-        topictosend = load_data_state_topic(
-            Site.objects.all()[0].id,
-            HomeGatewayId.objects.first().hgw_id,
-        )
+        from utils.helpers import get_default_site_id, get_home_gateway_hgw_id
+
+        site_id_cached = get_default_site_id()
+        gw_hgw_id = get_home_gateway_hgw_id()
+        if site_id_cached is None or gw_hgw_id is None:
+            return True
+        topictosend = load_data_state_topic(site_id_cached, gw_hgw_id)
         msg_payload = build_wattage_load_message(
             load_power,
             leg_id,

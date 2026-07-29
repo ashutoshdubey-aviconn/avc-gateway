@@ -25,21 +25,7 @@ class RouterHandlerInvocationTests(TestCase):
 
         with patch("mqtt.router.handle_meter_connection") as meter_conn, patch(
             "mqtt.router.handle_meter_energy"
-        ) as meter_energy, patch("mqtt.router.handle_voltage_message") as volt, patch(
-            "mqtt.router.handle_current_message"
-        ) as current, patch(
-            "mqtt.router.handle_power_factor_message"
-        ) as pf, patch(
-            "mqtt.router.handle_source_message"
-        ) as source, patch(
-            "mqtt.router.handle_load_time"
-        ) as load_time, patch(
-            "mqtt.router.handle_wattage"
-        ) as watt, patch(
-            "mqtt.router.handle_wattage_load"
-        ) as watt_load, patch(
-            "mqtt.router.handle_apparent"
-        ) as apparent:
+        ) as meter_energy:
             # Configure return for meter connection to False so flow continues
             meter_conn.return_value = False
 

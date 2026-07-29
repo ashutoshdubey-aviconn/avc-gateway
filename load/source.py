@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import Optional
 
 import paho.mqtt.client as mqtt
 
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
 from utils.payload import build_source_status_message
-from wareApp.models import HomeGatewayId, MeterSource, Site, SiteLoadPower
+from wareApp.models import MeterSource, Site, SiteLoadPower
 
 
 def handle_source_message(
@@ -93,10 +92,13 @@ def handle_source_message(
                 Updated_on=datetime.now(),
             )
 
-    topictosend = load_state_topic(
-        Site.objects.all()[0].id,
-        HomeGatewayId.objects.first().hgw_id,
-    )
+    from utils.helpers import get_default_site_id, get_home_gateway_hgw_id
+
+    site_id_cached = get_default_site_id()
+    gw_hgw_id = get_home_gateway_hgw_id()
+    if site_id_cached is None or gw_hgw_id is None:
+        return True
+    topictosend = load_state_topic(site_id_cached, gw_hgw_id)
 
     if source_1_entry.exists():
         publish_status(client, topictosend, build_source_status_message(source_1_entry.first()))

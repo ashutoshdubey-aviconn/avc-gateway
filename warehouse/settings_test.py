@@ -26,8 +26,9 @@ DEBUG = True
 # verification. Some test modules live under `mqtt/tests` and `mqtt` is not
 # a regular Django app; adding it here only for the test settings ensures
 # those tests run in the in-memory test environment.
-try:
-    # base settings provided INSTALLED_APPS as a sequence; coerce to list
-    INSTALLED_APPS = list(INSTALLED_APPS) + ["mqtt"]
-except Exception:
+# base settings provided INSTALLED_APPS as a sequence; coerce to list when present
+base_installed = globals().get("INSTALLED_APPS")
+if base_installed:
+    INSTALLED_APPS = list(base_installed) + ["mqtt"]
+else:
     INSTALLED_APPS = ["mqtt"]

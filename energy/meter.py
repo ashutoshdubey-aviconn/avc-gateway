@@ -1,5 +1,5 @@
+import logging
 from datetime import datetime
-from typing import Optional
 
 import paho.mqtt.client as mqtt
 
@@ -9,12 +9,13 @@ from utils.payload import build_consumption_payload
 from wareApp.models import (
     AisleGroup,
     DailySiteReading,
-    HomeGatewayId,
     HourlySiteReading,
     MeterReadings,
     Site,
     SmartEnergyDevices,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def handle_meter_connection(
@@ -85,7 +86,13 @@ def handle_meter_energy(
     previous_value = float(previous_reading.previous_reading_value)
     previous_updated_on = previous_reading.updated_on
 
-    topictosend = consumption_state_topic(site.id, HomeGatewayId.objects.first().hgw_id)
+    from utils.helpers import get_home_gateway_hgw_id
+
+    gw_hgw_id = get_home_gateway_hgw_id()
+    if gw_hgw_id is None:
+        logger.warning("Missing home gateway id for consumption topic")
+        return True
+    topictosend = consumption_state_topic(site.id, gw_hgw_id)
 
     if incoming_meter_reading < previous_value:
         payload = (

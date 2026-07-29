@@ -1,4 +1,4 @@
-from datetime import datetime
+# datetime not required in this test file
 
 from django.test import TestCase
 
@@ -25,9 +25,9 @@ class RouterTests(TestCase):
         self.assertIsNone(result)
 
     def test_route_message_with_meter_type_runs_handlers(self):
-        # Construct a topic with at least 7 parts where parts[3] == site id and parts[6] contains METER
+        # Construct a topic with >=7 parts; parts[3] is site id and parts[6] has METER
         topic = f"x/y/z/{self.site.id}/a/b/METER_ABC"
         msg = DummyMsg(topic, payload=b"123")
-        # Should not raise; side effects (DB writes) are not asserted here, only that routing completes
+        # Should not raise; only routing completion is asserted (no DB checks)
         result = route_message(None, msg)
         self.assertIsNone(result)

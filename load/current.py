@@ -1,5 +1,4 @@
 import logging
-from typing import Iterable
 
 import paho.mqtt.client as mqtt
 

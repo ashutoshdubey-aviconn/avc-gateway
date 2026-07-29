@@ -38,23 +38,19 @@ class RouterExpandedHandlerTests(TestCase):
             "remote": patch("mqtt.router.handle_remote_access"),
             "sync": patch("mqtt.router.handle_sync_message"),
         }
-        with patches["meter_conn"].start() as meter_conn, patches["meter_energy"].start() as meter_energy, patches[
-            "voltage"
-        ].start() as voltage, patches["current"].start() as current, patches["pf"].start() as pf, patches[
-            "source"
-        ].start() as source, patches[
-            "load_time"
-        ].start() as load_time, patches[
-            "watt"
-        ].start() as watt, patches[
-            "watt_load"
-        ].start() as watt_load, patches[
-            "apparent"
-        ].start() as apparent, patches[
-            "remote"
-        ].start() as remote, patches[
-            "sync"
-        ].start() as sync:
+        with (
+            patches["meter_conn"].start() as meter_conn,
+            patches["voltage"].start() as _voltage,
+            patches["current"].start() as _current,
+            patches["pf"].start() as _pf,
+            patches["source"].start() as _source,
+            patches["load_time"].start() as _load_time,
+            patches["watt"].start() as _watt,
+            patches["watt_load"].start() as _watt_load,
+            patches["apparent"].start() as _apparent,
+            patches["remote"].start() as remote,
+            patches["sync"].start() as sync,
+        ):
             meter_conn.return_value = False
             remote.return_value = False
             sync.return_value = False
@@ -66,25 +62,25 @@ class RouterExpandedHandlerTests(TestCase):
             # At least one downstream handler should have been called
             assert any(
                 [
-                    source.called,
-                    load_time.called,
-                    watt.called,
-                    watt_load.called,
-                    apparent.called,
-                    voltage.called,
-                    current.called,
-                    pf.called,
+                    _source.called,
+                    _load_time.called,
+                    _watt.called,
+                    _watt_load.called,
+                    _apparent.called,
+                    _voltage.called,
+                    _current.called,
+                    _pf.called,
                 ]
             ), "No downstream handlers were called"
             # meter_energy may be implemented downstream; focus on downstream handlers
 
             # phase-specific handler
             if phase_handler_name == "voltage":
-                voltage.assert_called()
+                _voltage.assert_called()
             elif phase_handler_name == "current":
-                current.assert_called()
+                _current.assert_called()
             elif phase_handler_name == "pf":
-                pf.assert_called()
+                _pf.assert_called()
 
     def test_phase_2_calls_voltage(self):
         # Test the voltage handler directly by creating a SiteLoadPower entry
@@ -136,9 +132,10 @@ class RouterExpandedHandlerTests(TestCase):
         topic = self._make_topic(self.site.id, message_for)
         msg = DummyMsg(topic, payload=b"data")
 
-        with patch("mqtt.router.handle_remote_access") as remote, patch(
-            "mqtt.router.handle_meter_energy"
-        ) as meter_energy:
+        with (
+            patch("mqtt.router.handle_remote_access") as remote,
+            patch("mqtt.router.handle_meter_energy") as meter_energy,
+        ):
             remote.return_value = True
             from mqtt.router import route_message
 

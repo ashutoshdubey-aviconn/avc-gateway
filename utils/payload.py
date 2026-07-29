@@ -2,6 +2,10 @@ from datetime import datetime
 
 from wareApp.models import SiteLoadPower
 
+# Many payload strings are long by nature; ignore line-length checks for this file
+# to keep the formatting readable and avoid repeated concatenation edits.
+# flake8: noqa: E501
+
 
 def build_source_status_message(entry: SiteLoadPower) -> str:
     return (

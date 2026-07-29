@@ -1,3 +1,10 @@
 [flake8]
-max-line-length = 120
-exclude = wareApp/migrations
+exclude = venv, .venv, wareApp/migrations
+max-line-length = 88
+per-file-ignores =
+    utils/payload.py: E501
+    gateway/recovery.py: E501
+    wareApp/models.py: E501
+    wareApp/serializers.py: E501
+    warehouse/settings_integration.py: E501
+

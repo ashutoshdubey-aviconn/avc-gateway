@@ -2,7 +2,7 @@ import logging
 import re
 import time
 from datetime import datetime, timedelta
-from typing import Optional, Union
+from typing import Optional
 
 import paho.mqtt.client as mqtt
 
@@ -29,7 +29,7 @@ def handle_sync_message(
 ) -> bool:
     if current_time is None:
         current_time = datetime.now()
-    missed_time: Union[float, str] = 0.0
+    missed_time: float | str = 0.0
 
     # Recovery of daily/hourly consumption
     if msg_subtype == "consumption":
@@ -64,7 +64,8 @@ def handle_sync_message(
                 return True
 
             # find all datetime-like substrings in the message; support YYYY-MM-DD and optional hour
-            datetime_patterns = re.findall(r"\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}(?::\d{2}(?::\d{2})?)?)?", message)
+            date_regex = r"\d{4}-\d{2}-\d{2}" r"(?:\s+\d{1,2}(?::\d{2}(?::\d{2})?)?)?"
+            datetime_patterns = re.findall(date_regex, message)
             start_dt = None
             end_dt = None
             if datetime_patterns:
@@ -144,7 +145,14 @@ def handle_sync_message(
             gw_total_cumulative = AisleGroup.objects.filter(site=site, aisle_grp_id=aisle_group_id_int)[
                 0
             ].cumulative_consumption
-            topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/dailyConsumption/state"
+            from utils.helpers import get_default_site_id, get_home_gateway_hgw_id
+
+            site_id_cached = get_default_site_id()
+            gw_hgw_id = get_home_gateway_hgw_id()
+            if site_id_cached is None or gw_hgw_id is None:
+                logger.warning("Missing site or gateway id for recovery topic")
+                return True
+            topictosend1 = "/Acclivate/iOmniControl/" f"{site_id_cached}/{gw_hgw_id}/in/recovery/dailyConsumption/state"
 
             date_cursor = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
             end_date_cursor = end_dt.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -171,7 +179,14 @@ def handle_sync_message(
 
             # Hourly recovery: iterate hours from start_dt (rounded to hour) up to end_dt
             logger.info("Now starting delayed recovery for hourly consumption data.")
-            topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/hourlyConsumption"
+            from utils.helpers import get_default_site_id, get_home_gateway_hgw_id
+
+            site_id_cached = get_default_site_id()
+            gw_hgw_id = get_home_gateway_hgw_id()
+            if site_id_cached is None or gw_hgw_id is None:
+                logger.warning("Missing site or gateway id for recovery hourly topic")
+                return True
+            topictosend1 = "/Acclivate/iOmniControl/" f"{site_id_cached}/{gw_hgw_id}/in/recovery/hourlyConsumption"
             hour_cursor = start_dt.replace(minute=0, second=0, microsecond=0)
             end_hour_cursor = end_dt.replace(minute=0, second=0, microsecond=0)
 
@@ -212,10 +227,8 @@ def handle_sync_message(
     # Recovery of load runtime for supply sources
     if msg_subtype == "loadTime":
         try:
-            m = re.search(
-                r"Power_source : (.*), Missed_consumption_time_in_secs : (.*), Last_synced_hour : (.*)",
-                message,
-            )
+            pattern = r"Power_source : (.*), " r"Missed_consumption_time_in_secs : (.*), " r"Last_synced_hour : (.*)"
+            m = re.search(pattern, message)
             if m is None:
                 logger.warning("Could not parse sync info: %s", message)
                 return True
@@ -254,10 +267,8 @@ def handle_sync_message(
             )
             topictosend = (
                 "/Acclivate/iOmniControl/"
-                + str(Site.objects.first().id)
-                + "/"
-                + HomeGatewayId.objects.first().hgw_id
-                + "/in/recovery/loadRuntime"
+                f"{Site.objects.first().id}/"
+                f"{HomeGatewayId.objects.first().hgw_id}/in/recovery/loadRuntime"
             )
             client.publish(topictosend, msg_payload, qos=0, retain=False)
             logger.info("Load runtime recovery message sent to server.")

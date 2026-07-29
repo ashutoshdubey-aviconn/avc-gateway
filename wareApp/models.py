@@ -319,10 +319,10 @@ class OTP(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
 
     def __unicode__(self):
-        return "OTP  {} on {}".format(self.otp, self.created)
+        return f"OTP  {self.otp} on {self.created}"
 
     def __str__(self):
-        return "OTP  {} on {}".format(self.otp, self.created)
+        return f"OTP  {self.otp} on {self.created}"
 
 
 class SiteLoadPower(models.Model):
@@ -350,33 +350,16 @@ class SiteLoadPower(models.Model):
 
     def __str__(self):
         return (
-            "Total Load: {},R-phase voltage: {}, Y-phase voltage: {}, B-phase voltage: {},"
-            " R-phase current: {},"
-            " Y-phase current: {}, B-phase current: {}, Supply Source: {}".format(
-                str(self.Site_Total_Load),
-                str(self.r_volt),
-                str(self.y_volt),
-                str(self.b_volt),
-                str(self.r_current),
-                str(self.y_current),
-                str(self.b_current),
-                str(self.Supply_Source),
-            )
+            f"Total Load: {str(self.Site_Total_Load)},R-phase voltage: {str(self.r_volt)}, Y-phase voltage: {str(self.y_volt)}, B-phase voltage: {str(self.b_volt)},"
+            f" R-phase current: {str(self.r_current)},"
+            f" Y-phase current: {str(self.y_current)}, B-phase current: {str(self.b_current)}, Supply Source: {str(self.Supply_Source)}"
         )
 
     def __unicode__(self):
         return (
-            "Total Load: {},R-phase voltage: {}, Y-phase voltage: {}, B-phase voltage: {},"
-            " R-phase current: {},"
-            " Y-phase current: {}, B-phase current: {}".format(
-                str(self.Site_Total_Load),
-                str(self.r_volt),
-                str(self.y_volt),
-                str(self.b_volt),
-                str(self.r_current),
-                str(self.y_current),
-                str(self.b_current),
-            )
+            f"Total Load: {str(self.Site_Total_Load)},R-phase voltage: {str(self.r_volt)}, Y-phase voltage: {str(self.y_volt)}, B-phase voltage: {str(self.b_volt)},"
+            f" R-phase current: {str(self.r_current)},"
+            f" Y-phase current: {str(self.y_current)}, B-phase current: {str(self.b_current)}"
         )
 
 
