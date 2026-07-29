@@ -2,6 +2,9 @@ import logging
 import re
 import time
 from datetime import datetime, timedelta
+from typing import Optional, Union
+
+import paho.mqtt.client as mqtt
 
 from wareApp.models import (
     AisleGroup,
@@ -15,61 +18,147 @@ from wareApp.models import (
 logger = logging.getLogger(__name__)
 
 
-from typing import Any
-
-
 def handle_sync_message(
-    client: Any,
-    msg: Any,
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
     message: str,
-    msg_type: Any,
-    msg_subtype: Any,
-    site: Any,
-    current_time: Any = None,
+    msg_type: list[str],
+    msg_subtype: Optional[str],
+    site: Optional[object],
+    current_time: Optional[datetime] = None,
 ) -> bool:
     if current_time is None:
         current_time = datetime.now()
-    missed_time: Any = 0
+    missed_time: Union[float, str] = 0.0
 
+    # Recovery of daily/hourly consumption
     if msg_subtype == "consumption":
         try:
+            # Flexible parsing: accept messages that include a missed seconds token,
+            # the aisle/leg id, and either a single last-synced datetime or a start+end range.
             data = message.split(",")
-            missed_time = data[0]
-            aisle_group_id = str(data[1].split(":")[1])
-            last_entry_datetime = data[2].split(":")[1].split(" ")
-            last_entry_date = datetime.strptime(last_entry_datetime[0], "%Y-%m-%d")
-            last_entry_date_hour = int(last_entry_datetime[1])
-            dateHourLastEntry = last_entry_date.replace(hour=last_entry_date_hour)
-            dateHourLastEntryHour = dateHourLastEntry
+            missed_time = data[0] if data else "missed:0"
+            # compute missed seconds explicitly to satisfy static typing
+            try:
+                missed_seconds = float(missed_time.split(":")[1])
+            except Exception:
+                missed_seconds = 0.0
+
+            # try to extract aisle group id (support different key labels)
+            aisle_group_id = None
+            for token in data:
+                if "aisle" in token.lower() or "leg" in token.lower():
+                    parts = token.split(":")
+                    if len(parts) > 1:
+                        aisle_group_id = parts[1].strip()
+                        break
+            if aisle_group_id is None and len(data) > 1:
+                # fallback to second segment value
+                aisle_group_id = data[1].split(":")[-1].strip()
+
+            if aisle_group_id is None:
+                logger.warning(
+                    "No aisle_group_id provided in consumption sync message: %s",
+                    message,
+                )
+                return True
+
+            # find all datetime-like substrings in the message; support YYYY-MM-DD and optional hour
+            datetime_patterns = re.findall(r"\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}(?::\d{2}(?::\d{2})?)?)?", message)
+            start_dt = None
+            end_dt = None
+            if datetime_patterns:
+                # parse first datetime as start
+                try:
+                    parts = datetime_patterns[0].split()
+                    if len(parts) == 1:
+                        start_dt = datetime.strptime(parts[0], "%Y-%m-%d")
+                    else:
+                        # try common full formats
+                        try:
+                            start_dt = datetime.strptime(datetime_patterns[0], "%Y-%m-%d %H:%M:%S.%f")
+                        except Exception:
+                            try:
+                                start_dt = datetime.strptime(datetime_patterns[0], "%Y-%m-%d %H:%M:%S")
+                            except Exception:
+                                # fallback to hour-only
+                                date_part, hour_part = parts[0], parts[1]
+                                start_dt = datetime.strptime(date_part, "%Y-%m-%d").replace(
+                                    hour=int(hour_part.split(":")[0])
+                                )
+                except Exception:
+                    start_dt = None
+
+                if len(datetime_patterns) > 1:
+                    try:
+                        parts = datetime_patterns[1].split()
+                        if len(parts) == 1:
+                            end_dt = datetime.strptime(parts[0], "%Y-%m-%d")
+                        else:
+                            try:
+                                end_dt = datetime.strptime(datetime_patterns[1], "%Y-%m-%d %H:%M:%S.%f")
+                            except Exception:
+                                try:
+                                    end_dt = datetime.strptime(datetime_patterns[1], "%Y-%m-%d %H:%M:%S")
+                                except Exception:
+                                    date_part, hour_part = parts[0], parts[1]
+                                    end_dt = datetime.strptime(date_part, "%Y-%m-%d").replace(
+                                        hour=int(hour_part.split(":")[0])
+                                    )
+                    except Exception:
+                        end_dt = None
+
+            # prepare query ranges
+            if start_dt is None:
+                # fallback to original single-last-entry behavior
+                # old format: data[2] contains date and hour
+                last_entry_datetime = (
+                    data[2].split(":")[1].split(" ")
+                    if len(data) > 2 and ":" in data[2]
+                    else [current_time.strftime("%Y-%m-%d"), str(current_time.hour)]
+                )
+                last_entry_date = datetime.strptime(last_entry_datetime[0], "%Y-%m-%d")
+                last_entry_date_hour = int(last_entry_datetime[1]) if len(last_entry_datetime) > 1 else 0
+                start_dt = last_entry_date.replace(hour=last_entry_date_hour)
+
+            if end_dt is None:
+                end_dt = current_time
+
             logger.info(
-                "This message has been received to recover the lost data on the server for %s seconds "
-                "for aisle group id %s.",
-                float(missed_time.split(":")[1]),
+                "Recovery requested: aisle_group=%s start=%s end=%s missed_seconds=%s",
                 aisle_group_id,
+                start_dt,
+                end_dt,
+                missed_seconds,
             )
-            logger.info(
-                "This is the time sent by the server to start recovery : %s",
-                dateHourLastEntry,
-            )
+
+            # Daily recovery: iterate by day from start_dt.date() to end_dt.date()
             logger.info("Firstly sending daily consumption data for quick recovery.")
-            legs = DailySiteReading.objects.filter(reading_for__gte=last_entry_date.date())
-            sync_date = current_time.date()
-            gw_total_cumulative = AisleGroup.objects.filter(site=site, aisle_grp_id=int(aisle_group_id))[
+            legs = DailySiteReading.objects.filter(reading_for__gte=start_dt.date())
+            aisle_group_id_str = str(aisle_group_id)
+            try:
+                aisle_group_id_int = int(aisle_group_id_str)
+            except Exception:
+                logger.warning("Invalid aisle_group_id value: %s", aisle_group_id_str)
+                return True
+            gw_total_cumulative = AisleGroup.objects.filter(site=site, aisle_grp_id=aisle_group_id_int)[
                 0
             ].cumulative_consumption
             topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/dailyConsumption/state"
 
-            while dateHourLastEntry.date() <= sync_date:
+            date_cursor = start_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date_cursor = end_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+            while date_cursor.date() <= end_date_cursor.date():
                 recovery_dates, daily_unit_consumptions = "", ""
-                daily_consumption_entry = legs.filter(leg_id=aisle_group_id, reading_for=dateHourLastEntry.date())
-                recovery_dates += dateHourLastEntry.strftime("%Y-%m-%d") + ","
+                daily_consumption_entry = legs.filter(leg_id=aisle_group_id, reading_for=date_cursor.date())
+                recovery_dates += date_cursor.strftime("%Y-%m-%d") + ","
                 if daily_consumption_entry.exists():
                     daily_unit_consumptions += str(daily_consumption_entry[0].unit_consumption) + ","
                 else:
                     daily_unit_consumptions += "ERROR404,"
                 msg_payload = (
                     "Aisle_group_id : "
-                    + aisle_group_id
+                    + aisle_group_id_str
                     + "; Recovery_Dates : "
                     + recovery_dates
                     + "; Unit_consumptions : "
@@ -78,27 +167,29 @@ def handle_sync_message(
                     + str(gw_total_cumulative)
                 )
                 client.publish(topictosend1, msg_payload, qos=0, retain=False)
-                dateHourLastEntry += timedelta(days=1)
+                date_cursor += timedelta(days=1)
 
+            # Hourly recovery: iterate hours from start_dt (rounded to hour) up to end_dt
             logger.info("Now starting delayed recovery for hourly consumption data.")
             topictosend1 = f"/Acclivate/iOmniControl/{Site.objects.all()[0].id}/{HomeGatewayId.objects.all()[0].hgw_id}/in/recovery/hourlyConsumption"
-            sync_hour = datetime.now()
+            hour_cursor = start_dt.replace(minute=0, second=0, microsecond=0)
+            end_hour_cursor = end_dt.replace(minute=0, second=0, microsecond=0)
 
-            while sync_hour >= dateHourLastEntryHour:
+            while hour_cursor <= end_hour_cursor:
                 recovery_hours, hourly_unit_consumptions = "", ""
                 hourly_entry = HourlySiteReading.objects.filter(
                     leg_id=aisle_group_id,
-                    reading_from__lte=dateHourLastEntryHour,
-                    reading_to__gte=dateHourLastEntryHour,
+                    reading_from__lte=hour_cursor,
+                    reading_to__gte=hour_cursor,
                 )
-                recovery_hours += dateHourLastEntryHour.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
+                recovery_hours += hour_cursor.strftime("%Y-%m-%d %H:%M:%S.%f") + ","
                 if hourly_entry.exists():
                     hourly_unit_consumptions += str(hourly_entry[0].unit_consumption) + ","
                 else:
                     hourly_unit_consumptions += "ERROR404,"
                 msg_payload = (
                     "Aisle_group_id : "
-                    + aisle_group_id
+                    + aisle_group_id_str
                     + "; Recovery_Hours : "
                     + recovery_hours
                     + "; Unit_consumptions : "
@@ -112,11 +203,13 @@ def handle_sync_message(
                     aisle_group_id,
                 )
                 time.sleep(2)
-                dateHourLastEntryHour += timedelta(hours=1)
+                hour_cursor += timedelta(hours=1)
+
         except Exception as e:
             logger.exception("Exception in consumption sync block: %s", e)
         return True
 
+    # Recovery of load runtime for supply sources
     if msg_subtype == "loadTime":
         try:
             m = re.search(

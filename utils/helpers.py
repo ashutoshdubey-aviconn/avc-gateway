@@ -1,7 +1,9 @@
-from typing import Any, Optional
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 
-def publish_status(client: Any, topic: str, message: str) -> None:
+def publish_status(client: mqtt.Client, topic: str, message: str) -> None:
     if topic and message is not None:
         client.publish(topic, message, qos=0, retain=False)
 
@@ -14,7 +16,10 @@ def phase_attribute(phase_index: str, suffix: str) -> Optional[str]:
     return f"{prefix}{suffix}"
 
 
-def update_phase_entry(entry_qs: Any, phase_index: str, suffix: str, payload: Any) -> Optional[float]:
+from django.db.models.query import QuerySet
+
+
+def update_phase_entry(entry_qs: QuerySet, phase_index: str, suffix: str, payload: str) -> Optional[float]:
     field = phase_attribute(phase_index, suffix)
     if field is None:
         return None

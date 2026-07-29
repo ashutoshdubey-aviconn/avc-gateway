@@ -1,5 +1,7 @@
 from datetime import datetime
-from typing import Any
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
@@ -7,7 +9,13 @@ from utils.payload import build_source_status_message
 from wareApp.models import HomeGatewayId, MeterSource, Site, SiteLoadPower
 
 
-def handle_source_message(client: Any, msg: Any, site: Any, msg_type: Any, message: Any) -> bool:
+def handle_source_message(
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
+    site: Site,
+    msg_type: list[str],
+    message: str,
+) -> bool:
     if "SOURCE" not in msg_type:
         return False
 

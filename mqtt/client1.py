@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Dict
 
 import paho.mqtt.client as mqtt
 from celery.utils.log import get_task_logger
@@ -15,12 +15,12 @@ def start_client() -> None:
     Business logic is handled in the on_message callback.
     """
 
-    def on_connect(client: Any, userdata: Any, flags: Any, rc: int) -> None:
+    def on_connect(client: mqtt.Client, userdata: object, flags: Dict[str, int], rc: int) -> None:
         logger.info("Connected with result code %s", rc)
         client.subscribe("/asem/aviconn/#")
         client.subscribe("/Acclivate/iOmniControl/#", 1)
 
-    def on_message(client: Any, userdata: Any, msg: Any) -> None:
+    def on_message(client: mqtt.Client, userdata: object, msg: mqtt.MQTTMessage) -> None:
         route_message(client, msg)
 
     client = mqtt.Client(client_id=CLIENT1_ID)

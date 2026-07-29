@@ -1,4 +1,7 @@
-from typing import Any
+from datetime import datetime
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 from constants.topics import consumption_state_topic
 from utils.helpers import publish_status
@@ -9,26 +12,33 @@ from wareApp.models import (
     HomeGatewayId,
     HourlySiteReading,
     MeterReadings,
+    Site,
     SmartEnergyDevices,
 )
 
 
-def handle_meter_connection(client: Any, msg: Any, message: Any, message_for: Any, msg_type: Any) -> bool:
+def handle_meter_connection(
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
+    message: str,
+    message_for: str,
+    msg_type: list[str],
+) -> bool:
     if message not in {"Disconnected", "Connected"}:
         return False
     topictosend = msg.topic.replace("localstate", "state").replace("asem", "Acclivate")
-    client.publish(topictosend, msg, qos=0, retain=False)
+    client.publish(topictosend, message, qos=0, retain=False)
     return True
 
 
 def handle_meter_energy(
-    client: Any,
-    msg: Any,
-    message: Any,
-    message_for: Any,
-    msg_type: Any,
-    site: Any,
-    current_time: Any,
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
+    message: str,
+    message_for: str,
+    msg_type: list[str],
+    site: Site,
+    current_time: datetime,
 ) -> bool:
     if len(msg_type) <= 6 or msg_type[6] != "0":
         return False

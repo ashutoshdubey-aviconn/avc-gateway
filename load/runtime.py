@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 from constants.topics import supply_time_state_topic
 from utils.payload import build_supply_time_payload
@@ -16,13 +18,13 @@ logger = logging.getLogger(__name__)
 
 
 def handle_load_time(
-    client: Any,
-    msg: Any,
-    site: Any,
-    msg_type: Any,
-    message_for: Any,
-    message: Any,
-    current_time: Any,
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
+    site: Site,
+    msg_type: list[str],
+    message_for: str,
+    message: str,
+    current_time: datetime,
 ) -> bool:
     if "TIME" not in msg_type or "LOAD" not in msg_type:
         return False

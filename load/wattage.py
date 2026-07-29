@@ -1,6 +1,9 @@
 import logging
 import time
 from datetime import datetime
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 from constants.topics import load_data_state_topic
 from utils.payload import build_wattage_load_message
@@ -9,10 +12,7 @@ from wareApp.models import HomeGatewayId, LoadData, Site, SiteLoadPower
 logger = logging.getLogger(__name__)
 
 
-from typing import Any
-
-
-def handle_wattage(client: Any, msg: Any, msg_type: Any, message: Any) -> bool:
+def handle_wattage(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: list[str], message: str) -> bool:
     if "WATTAGE" not in msg_type:
         return False
     try:
@@ -30,7 +30,7 @@ def handle_wattage(client: Any, msg: Any, msg_type: Any, message: Any) -> bool:
     return True
 
 
-def handle_wattage_load(client: Any, msg: Any, msg_type: Any, message: Any) -> bool:
+def handle_wattage_load(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: list[str], message: str) -> bool:
     if "WATTAGELOAD" not in msg_type:
         return False
     try:

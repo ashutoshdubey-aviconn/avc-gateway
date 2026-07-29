@@ -1,8 +1,16 @@
-from typing import Any, Dict
+from typing import TypedDict, Union
 
 
-def normalize_payload(payload: Any) -> str:
-    if isinstance(payload, bytes):
+class ParsedTopic(TypedDict, total=False):
+    parts: list[str]
+    location_id: int
+    message_for: str
+    msg_subtype: str
+    msg_type: list[str]
+
+
+def normalize_payload(payload: bytes | bytearray | str | object) -> str:
+    if isinstance(payload, (bytes, bytearray)):
         try:
             return payload.decode("utf-8", errors="ignore")
         except Exception:
@@ -10,14 +18,9 @@ def normalize_payload(payload: Any) -> str:
     return str(payload)
 
 
-def parse_mqtt_topic(topic: str) -> Dict[str, Any]:
+def parse_mqtt_topic(topic: str) -> ParsedTopic:
     parts = topic.split("/")
-    parsed: Dict[str, Any] = {
-        "parts": parts,
-        "location_id": None,
-        "message_for": None,
-        "msg_subtype": None,
-    }
+    parsed: ParsedTopic = {"parts": parts}
     if len(parts) > 3 and parts[3].isdigit():
         parsed["location_id"] = int(parts[3])
     if len(parts) > 6:

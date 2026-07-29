@@ -1,4 +1,7 @@
-from typing import Any
+from datetime import datetime
+from typing import Optional
+
+import paho.mqtt.client as mqtt
 
 from wareApp.models import (
     AisleGroup,
@@ -10,14 +13,14 @@ from wareApp.models import (
 
 
 def handle_apparent(
-    client: Any,
-    msg: Any,
-    message_for: Any,
-    msg_type: Any,
-    site: Any,
-    current_time: Any,
-    message: Any,
-    location_id: Any,
+    client: mqtt.Client,
+    msg: mqtt.MQTTMessage,
+    message_for: str,
+    msg_type: list[str],
+    site: Optional[object],
+    current_time: datetime,
+    message: str,
+    location_id: Optional[int],
 ) -> bool:
     if "APPARENT" not in msg_type:
         return False
@@ -51,13 +54,13 @@ def handle_apparent(
         if incoming_meter_reading >= previous_meter_reading_value:
             new_unit_consumption = (incoming_meter_reading - previous_meter_reading_value) / 1000
             hourly_entry = HourlySiteReading.objects.filter(
-                associated_Site=int(location_id),
+                associated_Site=(int(location_id) if location_id is not None else (getattr(site, "id", 0))),
                 leg_id=leg_id,
                 reading_from__gte=dateHourLowerLimitCheck,
                 reading_to__lte=dateHourUpperLimitCheck,
             )
             daily_entry = DailySiteReading.objects.filter(
-                associated_Site=int(location_id),
+                associated_Site=(int(location_id) if location_id is not None else (getattr(site, "id", 0))),
                 leg_id=leg_id,
                 reading_for=current_time.date(),
             )

@@ -1,7 +1,9 @@
 import logging
 import os
 import time
-from typing import Any
+from typing import Iterable
+
+import paho.mqtt.client as mqtt
 
 from constants.topics import remote_access_state_topic
 from wareApp.models import HomeGatewayId
@@ -9,7 +11,7 @@ from wareApp.models import HomeGatewayId
 logger = logging.getLogger(__name__)
 
 
-def handle_remote_access(client: Any, msg: Any, message: str, msg_type: Any) -> bool:
+def handle_remote_access(client: mqtt.Client, msg: mqtt.MQTTMessage, message: str, msg_type: Iterable[str]) -> bool:
     if "remoteAccess" not in msg_type:
         return False
 
@@ -62,9 +64,9 @@ def handle_remote_access(client: Any, msg: Any, message: str, msg_type: Any) -> 
             )
             os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
             os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
-            msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
-            logger.warning(msg)
-            client.publish(topicsend, msg, qos=1, retain=False)
+            payload_msg = "Rssh and monitoring port restarted for gateway id {}.".format(gw_id.hgw_id)
+            logger.warning(payload_msg)
+            client.publish(topicsend, payload_msg, qos=1, retain=False)
             return True
         client.publish(topicsend, "Autossh started successfully.", qos=1, retain=False)
         return True
@@ -74,20 +76,20 @@ def handle_remote_access(client: Any, msg: Any, message: str, msg_type: Any) -> 
         os.system("echo odroid | sudo -S pgrep autossh | xargs kill -9")
         os.system("echo odroid | sudo -S fuser -k " + gw_id.rssh_port + "/tcp")
         os.system("echo odroid | sudo -S fuser -k " + gw_id.monitoring_port + "/tcp")
-        msg = "Autossh has been stopped. Rssh and Monitoring ports have been closed."
-        logger.info(msg)
-        client.publish(topicsend, msg, qos=1, retain=False)
+        payload_msg = "Autossh has been stopped. Rssh and Monitoring ports have been closed."
+        logger.info(payload_msg)
+        client.publish(topicsend, payload_msg, qos=1, retain=False)
         return True
 
     if action == "restart":
         logger.info("Got a command from server to restart the gateway.")
         os.system("echo odroid | sudo -S init 6")
-        msg = "Gateway has been restarted."
-        logger.info(msg)
-        client.publish(topicsend, msg, qos=1, retain=False)
+        payload_msg = "Gateway has been restarted."
+        logger.info(payload_msg)
+        client.publish(topicsend, payload_msg, qos=1, retain=False)
         return True
 
-    msg = "Got an unknown command for rssh."
-    logger.warning(msg)
-    client.publish(topicsend, msg, qos=1, retain=False)
+    payload_msg = "Got an unknown command for rssh."
+    logger.warning(payload_msg)
+    client.publish(topicsend, payload_msg, qos=1, retain=False)
     return True
