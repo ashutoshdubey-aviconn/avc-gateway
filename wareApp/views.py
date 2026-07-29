@@ -1,10 +1,11 @@
 # flake8: noqa
 import logging
-from datetime import datetime, time
+from datetime import time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group, User
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -94,7 +95,7 @@ def create_newCustomer(APIView):
         customer_type = 4
         email = data.get("customer_email")
         contact = data.get("customer_contact")
-        currentdate = datetime.now()
+        currentdate = timezone.now()
         user = User.objects.create(
             id=customer_id,
             username=username,

@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from wareApp.models import SiteLoadPower
 
@@ -11,7 +11,7 @@ def build_source_status_message(entry: SiteLoadPower) -> str:
     return (
         f"Total_load :{entry.Site_Total_Load}, R-phase-voltage :{entry.r_volt}, Y-phase-voltage :{entry.y_volt}, B-phase-voltage :{entry.b_volt}, "
         f"R-phase-current :{entry.r_current}, Y-phase-current :{entry.y_current}, B-phase-current :{entry.b_current}, Power_Source :{entry.Supply_Source}, Status :{entry.Status}, "
-        f"Meter_number :{entry.Meter_Number}, Message_created_time :{datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')}, "
+        f"Meter_number :{entry.Meter_Number}, Message_created_time :{timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')}, "
         f"R-phase-power-factor :{entry.r_power_factor}, Y-phase-power-factor :{entry.y_power_factor}, B-phase-power-factor :{entry.b_power_factor}"
     )
 

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import paho.mqtt.client as mqtt
+from django.utils import timezone
 
 from wareApp.models import (
     AisleGroup,
@@ -28,7 +29,7 @@ def handle_sync_message(
     current_time: Optional[datetime] = None,
 ) -> bool:
     if current_time is None:
-        current_time = datetime.now()
+        current_time = timezone.now()
     missed_time: float | str = 0.0
 
     # Recovery of daily/hourly consumption

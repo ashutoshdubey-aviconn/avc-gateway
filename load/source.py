@@ -1,6 +1,5 @@
-from datetime import datetime
-
 import paho.mqtt.client as mqtt
+from django.utils import timezone
 
 from constants.topics import load_state_topic
 from utils.helpers import publish_status
@@ -51,7 +50,7 @@ def handle_source_message(
             return True
 
         if target.exists():
-            target.update(Status="ON", Updated_on=datetime.now())
+            target.update(Status="ON", Updated_on=timezone.now())
             if fallback.exists():
                 fallback.update(
                     Site_Total_Load=0,
@@ -65,7 +64,7 @@ def handle_source_message(
                     y_power_factor=0,
                     b_power_factor=0,
                     Status="OFF",
-                    Updated_on=datetime.now(),
+                    Updated_on=timezone.now(),
                 )
         else:
             SiteLoadPower.objects.create(
@@ -73,7 +72,7 @@ def handle_source_message(
                 Meter_Number=meter_number,
                 Supply_Source=active,
                 Status="ON",
-                Updated_on=datetime.now(),
+                Updated_on=timezone.now(),
             )
     else:
         if message not in {"0", "1"}:
@@ -81,7 +80,7 @@ def handle_source_message(
         if source_1_entry.exists():
             source_1_entry.update(
                 Status="ON" if message == "1" else "OFF",
-                Updated_on=datetime.now(),
+                Updated_on=timezone.now(),
             )
         else:
             SiteLoadPower.objects.create(
@@ -89,7 +88,7 @@ def handle_source_message(
                 Meter_Number=meter_number,
                 Supply_Source=power_source_1,
                 Status="ON",
-                Updated_on=datetime.now(),
+                Updated_on=timezone.now(),
             )
 
     from utils.helpers import get_default_site_id, get_home_gateway_hgw_id

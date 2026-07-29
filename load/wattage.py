@@ -1,8 +1,8 @@
 import logging
 import time
-from datetime import datetime
 
 import paho.mqtt.client as mqtt
+from django.utils import timezone
 
 from constants.topics import load_data_state_topic
 from utils.payload import build_wattage_load_message
@@ -35,7 +35,7 @@ def handle_wattage_load(client: mqtt.Client, msg: mqtt.MQTTMessage, msg_type: li
     try:
         site = Site.objects.first()
         load_power = float(message)
-        time_now = datetime.now()
+        time_now = timezone.now()
         epochTime = round(time.time() * 1000)
         load_entry = LoadData.objects.filter(
             Associated_Site=site,
