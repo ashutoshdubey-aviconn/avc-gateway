@@ -36,8 +36,24 @@ def handle_sync_message(
     site: Optional[object],
     current_time: Optional[datetime] = None,
 ) -> bool:
+    """Handle cloud-initiated sync/recovery messages.
+
+    Supports two subtypes under the recovery namespace:
+    - `consumption`: requests for daily/hourly consumption recovery for a
+      specific aisle/leg id and optional time range. The handler publishes
+      structured recovery messages back to the cloud for daily and hourly
+      windows.
+    - `loadTime`: requests recovery of supply load runtime for power sources.
+
+    The `message` payload is parsed flexibly to accept several historical
+    formats. Returns True when the message was handled (including parse
+    failures and missing data), and False only when the handler should not
+    claim the message.
+    """
+
     if current_time is None:
         current_time = timezone.now()
+
     missed_time: float | str = 0.0
 
     # Recovery of daily/hourly consumption

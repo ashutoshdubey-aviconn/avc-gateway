@@ -20,6 +20,18 @@ logger = logging.getLogger(__name__)
 
 
 def handle_remote_access(client: mqtt.Client, msg: mqtt.MQTTMessage, message: str, msg_type: Iterable[str]) -> bool:
+    """Handle remote access (autossh) control commands from MQTT.
+
+    Recognizes messages whose `msg_type` contains `remoteAccess`. The
+    `message` payload is expected as an underscore-separated command string
+    like `start_3` (start with retry count), `stop`, or `restart`. The
+    function executes local system commands to control `autossh` and reports
+    status back to the cloud via the configured `remote_access_state_topic`.
+
+    Returns False if the handler does not apply to the message, True when
+    the message has been handled (even for unknown commands or errors).
+    """
+
     if "remoteAccess" not in msg_type:
         return False
 
