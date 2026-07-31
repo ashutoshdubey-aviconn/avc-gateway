@@ -39,11 +39,23 @@ def start_client() -> None:
     """
 
     def on_connect(client: mqtt.Client, userdata: object, flags: dict[str, int], rc: int) -> None:
+        """MQTT on_connect callback.
+
+        Subscribes to the local telemetry prefix (`/asem/aviconn/#`) and the
+        cloud/control prefix (`/Acclivate/iOmniControl/#`) when the broker
+        connection is established.
+        """
         logger.info("Connected with result code %s", rc)
         client.subscribe("/asem/aviconn/#")
         client.subscribe("/Acclivate/iOmniControl/#", 1)
 
     def on_message(client: mqtt.Client, userdata: object, msg: mqtt.MQTTMessage) -> None:
+        """MQTT on_message callback.
+
+        For each incoming message, delegate routing/processing to
+        `mqtt.router.route_message` which performs topic parsing, filtering and
+        dispatch to domain-specific handlers.
+        """
         route_message(client, msg)
 
     client = mqtt.Client(client_id=CLIENT1_ID)
