@@ -1,3 +1,15 @@
+"""
+Module utils.helpers
+
+Flow:
+Top-level functions:
+- publish_status
+- phase_attribute
+- update_phase_entry
+- get_default_site_id: Return the first Site id, cached for the process lifetime.
+- get_home_gateway_hgw_id: Return the first HomeGatewayId.hgw_id string, cached for the process lifetime.
+"""
+
 from typing import Optional
 
 import paho.mqtt.client as mqtt

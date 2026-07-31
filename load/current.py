@@ -1,3 +1,12 @@
+"""
+Module load.current
+
+Flow:
+Top-level functions:
+- _handle_phase
+- handle_current_message
+"""
+
 import logging
 
 import paho.mqtt.client as mqtt

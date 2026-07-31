@@ -1,3 +1,9 @@
+"""
+Module wareApp.urls
+
+Flow:
+"""
+
 from django.urls import include, path
 
 from .views import create_newCustomer

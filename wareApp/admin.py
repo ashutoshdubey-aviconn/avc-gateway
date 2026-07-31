@@ -1,3 +1,13 @@
+"""
+flake8: noqa
+
+Flow:
+Top-level classes:
+- HourlyReadingFields
+- SupplyTimeShareFields
+- siteLoadPower
+"""
+
 # flake8: noqa
 from django.contrib import admin
 

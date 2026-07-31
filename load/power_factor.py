@@ -1,3 +1,12 @@
+"""
+Module load.power_factor
+
+Flow:
+Top-level functions:
+- _handle_phase
+- handle_power_factor_message
+"""
+
 import logging
 
 import paho.mqtt.client as mqtt

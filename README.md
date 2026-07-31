@@ -1,5 +1,7 @@
 # WH Project (Warehouse Gateway)
 
+[![Django Tests](https://github.com/OWNER/REPO/actions/workflows/python-tests.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/python-tests.yml)
+
 Overview
 --------
 This repository contains the backend gateway services for warehouse energy monitoring and control. The system ingests MQTT messages from edge Home Gateways and meters, processes them locally (calculations, aggregation, DB persistence), and republishes status/telemetry to cloud topics as needed.

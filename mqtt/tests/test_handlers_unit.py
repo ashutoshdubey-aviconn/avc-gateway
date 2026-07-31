@@ -1,3 +1,12 @@
+"""
+Module mqtt.tests.test_handlers_unit
+
+Flow:
+Top-level classes:
+- DummyClient
+- HandlerUnitTests
+"""
+
 from datetime import timezone
 
 from django.test import TestCase

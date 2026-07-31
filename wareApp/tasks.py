@@ -1,3 +1,12 @@
+"""
+Module wareApp.tasks
+
+Flow:
+Top-level functions:
+- mqtt_client1
+- mqtt_client2
+"""
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 

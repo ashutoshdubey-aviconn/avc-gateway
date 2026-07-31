@@ -1,3 +1,12 @@
+"""
+Module energy.meter
+
+Flow:
+Top-level functions:
+- handle_meter_connection
+- handle_meter_energy
+"""
+
 import logging
 from datetime import datetime
 

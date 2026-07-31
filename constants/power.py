@@ -1,3 +1,9 @@
+"""
+Module constants.power
+
+Flow:
+"""
+
 PHASE_SUFFIX_MAP = {
     "1": "power",
     "2": "volt",

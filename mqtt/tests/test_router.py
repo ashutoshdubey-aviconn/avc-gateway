@@ -1,3 +1,12 @@
+"""
+datetime not required in this test file
+
+Flow:
+Top-level classes:
+- DummyMsg
+- RouterTests
+"""
+
 # datetime not required in this test file
 
 from django.test import TestCase

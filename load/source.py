@@ -1,3 +1,11 @@
+"""
+Module load.source
+
+Flow:
+Top-level functions:
+- handle_source_message
+"""
+
 import paho.mqtt.client as mqtt
 from django.utils import timezone
 

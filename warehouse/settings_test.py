@@ -1,3 +1,9 @@
+"""
+Module warehouse.settings_test
+
+Flow:
+"""
+
 import importlib
 
 # Import base settings module and copy uppercase attributes to this module's

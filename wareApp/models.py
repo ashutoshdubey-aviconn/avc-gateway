@@ -1,3 +1,23 @@
+"""
+Module wareApp.models
+
+Flow:
+Top-level functions:
+- Create_Group
+- Add_group_to_user
+Top-level classes:
+- User
+- CustomerInfo
+- Site
+- HomeGatewayId
+- Image
+- BlockInfo
+- Panel
+- Floor
+- MonthlyEnergySaving
+- AisleGroup
+"""
+
 import logging
 
 from django.conf import settings
@@ -68,7 +88,7 @@ class CustomerInfo(models.Model):
 
 class Site(models.Model):
     customer = models.ForeignKey(User, related_name="site", on_delete=models.CASCADE, null=True, blank=True)
-    site_name = models.CharField(max_length=20)
+    site_name = models.CharField(max_length=35)
     SITE_TYPE = ((1, "WH_Metering"), (2, "WH_Energy_Saving"), (3, "WH_AssetTracking"))
     site_type = models.PositiveIntegerField(choices=SITE_TYPE, null=True, blank=True)
     total_no_of_blocks = models.PositiveIntegerField(null=True, blank=True)
@@ -132,7 +152,7 @@ class Image(models.Model):
     image_id = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.image_file
+        return str(self.image_file)
 
     def __unicode__(self):
         return self.image_file
@@ -155,7 +175,7 @@ class Panel(models.Model):
     panel = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
-        return self.panel
+        return str(self.panel) if self.panel is not None else ""
 
     def __unicode__(self):
         return self.panel
@@ -174,7 +194,7 @@ class Floor(models.Model):
     floor = models.CharField(max_length=30, choices=FLOOR, null=True, blank=True)
 
     def __str__(self):
-        return self.floor
+        return str(self.floor) if self.floor is not None else ""
 
     def __unicode__(self):
         return self.floor
@@ -188,7 +208,7 @@ class MonthlyEnergySaving(models.Model):
     created = models.DateField()
 
     def __str__(self):
-        return self.percentage_monthly_saving
+        return str(self.percentage_monthly_saving) if self.percentage_monthly_saving is not None else ""
 
     def __unicode__(self):
         return self.percentage_monthly_saving
@@ -218,6 +238,12 @@ class AisleGroup(models.Model):
         (5, "DG 5"),
     )
     power_source = models.PositiveIntegerField(default=0, choices=sources)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["site", "aisle_grp_id"], name="wa_aisle_site_grp_idx"),
+            models.Index(fields=["aisle_grp_id"], name="wa_aisle_grp_id_idx"),
+        ]
 
     def __str__(self):
         return self.aisleGroupName + " " + str(self.site)
@@ -249,6 +275,14 @@ class HourlySiteReading(models.Model):
     reading_from = models.DateTimeField(blank=True, null=True)
     reading_to = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        indexes = [
+            models.Index(
+                fields=["leg_id", "reading_from", "reading_to"],
+                name="wa_hourly_leg_from_to_idx",
+            ),
+        ]
+
     def __str__(self):
         return str(self.leg_id)
 
@@ -259,6 +293,11 @@ class DailySiteReading(models.Model):
     leg_id = models.CharField(max_length=50, null=True, blank=True)
     unit_consumption = models.FloatField(null=True, blank=True)
     reading_for = models.DateField(default=timezone.now)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["leg_id", "reading_for"], name="wa_daily_leg_reading_idx"),
+        ]
 
     def __str__(self):
         return str(self.leg_id)
@@ -420,7 +459,7 @@ class MeterReadings(models.Model):
         return self.reading_of
 
     def __str__(self):
-        return self.reading_of
+        return str(self.reading_of) if self.reading_of is not None else ""
 
 
 class SupplyLoadTimeShare(models.Model):

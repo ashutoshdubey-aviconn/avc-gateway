@@ -1,3 +1,11 @@
+"""
+Module warehouse.celery
+
+Flow:
+Top-level functions:
+- debug_task
+"""
+
 import logging
 import os
 

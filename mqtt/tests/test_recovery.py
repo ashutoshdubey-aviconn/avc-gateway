@@ -1,3 +1,12 @@
+"""
+Module mqtt.tests.test_recovery
+
+Flow:
+Top-level classes:
+- DummyClient
+- RecoveryHandlerTests
+"""
+
 from datetime import datetime, timedelta
 
 from django.test import TestCase

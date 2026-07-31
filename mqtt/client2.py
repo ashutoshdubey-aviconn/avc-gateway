@@ -1,4 +1,12 @@
-from typing import Dict
+"""
+Module mqtt.client2
+
+Flow:
+Top-level functions:
+- start_client
+"""
+
+from typing import dict
 
 import paho.mqtt.client as mqtt
 from celery.utils.log import get_task_logger
@@ -10,7 +18,7 @@ logger = get_task_logger(__name__)
 
 
 def start_client() -> None:
-    def on_connect(client: mqtt.Client, userdata: object, flags: Dict[str, int], rc: int) -> None:
+    def on_connect(client: mqtt.Client, userdata: object, flags: dict[str, int], rc: int) -> None:
         logger.info("Connected with result code %s", rc)
         client.subscribe("/Acclivate/iOmniControl/#")
 

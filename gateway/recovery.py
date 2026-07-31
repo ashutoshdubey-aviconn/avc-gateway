@@ -1,3 +1,11 @@
+"""
+Module gateway.recovery
+
+Flow:
+Top-level functions:
+- handle_sync_message
+"""
+
 import logging
 import re
 import time

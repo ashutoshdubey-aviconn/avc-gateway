@@ -1,3 +1,11 @@
+"""
+Module gateway.autossh
+
+Flow:
+Top-level functions:
+- handle_remote_access
+"""
+
 import logging
 import os
 import time

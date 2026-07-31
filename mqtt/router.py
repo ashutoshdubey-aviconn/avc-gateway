@@ -1,3 +1,11 @@
+"""
+Module mqtt.router
+
+Flow:
+Top-level functions:
+- route_message: Central MQTT routing entrypoint.
+"""
+
 import logging
 
 import paho.mqtt.client as mqtt
@@ -58,8 +66,8 @@ def route_message(client: mqtt.Client, msg: mqtt.MQTTMessage) -> None:
     if location_id is not None:
         site_obj = Site.objects.filter(id=location_id).first()
 
-    # Only run sync/recovery handler when a subtype is present (e.g. recovery topics)
-    if msg_subtype is not None and handle_sync_message(
+    # Only run sync/recovery handler for specific recovery subtypes
+    if msg_subtype in ("consumption", "loadTime") and handle_sync_message(
         client, msg, message, msg_type, msg_subtype, site_obj, timezone.now()
     ):
         return

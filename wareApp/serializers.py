@@ -1,3 +1,17 @@
+"""
+Module wareApp.serializers
+
+Flow:
+Top-level classes:
+- TokenSerializer
+- LoginSerializer
+- UserSerializer
+- UserCustomerInfoSerializer
+- CustomerInfoSerializer
+- CustomerWarehouseDetailSerializer
+- SiteSerializer
+"""
+
 import base64
 import logging
 

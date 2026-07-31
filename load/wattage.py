@@ -1,3 +1,12 @@
+"""
+Module load.wattage
+
+Flow:
+Top-level functions:
+- handle_wattage
+- handle_wattage_load
+"""
+
 import logging
 import time
 

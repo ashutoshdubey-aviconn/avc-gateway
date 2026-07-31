@@ -1,3 +1,19 @@
+"""
+Using Python 3.10+ union types (PEP 604)
+
+Flow:
+Top-level functions:
+- build_topic
+- consumption_state_topic
+- load_state_topic
+- supply_time_state_topic
+- load_data_state_topic
+- recovery_daily_consumption_topic
+- recovery_hourly_consumption_topic
+- recovery_load_runtime_topic
+- remote_access_state_topic
+"""
+
 # Using Python 3.10+ union types (PEP 604)
 
 BASE_TOPIC_PREFIX = "/Acclivate/iOmniControl"

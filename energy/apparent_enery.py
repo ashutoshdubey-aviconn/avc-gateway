@@ -1,3 +1,11 @@
+"""
+Module energy.apparent_enery
+
+Flow:
+Top-level functions:
+- handle_apparent
+"""
+
 from datetime import datetime
 from typing import Optional
 

@@ -1,3 +1,23 @@
+"""
+flake8: noqa
+
+Flow:
+Top-level functions:
+- entryExit: Trace entry, exit and exceptions.
+- create_customer
+- create_newCustomer
+- create_site
+- fetch_site_id
+- create_aisle_group
+- fetch_all_aisle_groups
+- create_home_gateway_id
+- fetch_home_gateway
+- create_smart_energy_devices
+Top-level classes:
+- UserViewSet: API endpoint that allows users to be viewed or edited.
+- GroupViewSet: API endpoint that allows groups to be viewed or edited.
+"""
+
 # flake8: noqa
 import logging
 from datetime import time

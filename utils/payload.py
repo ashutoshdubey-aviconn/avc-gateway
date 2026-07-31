@@ -1,3 +1,14 @@
+"""
+Module utils.payload
+
+Flow:
+Top-level functions:
+- build_source_status_message
+- build_wattage_load_message
+- build_supply_time_payload
+- build_consumption_payload
+"""
+
 from django.utils import timezone
 
 from wareApp.models import SiteLoadPower

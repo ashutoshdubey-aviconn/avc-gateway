@@ -1,3 +1,12 @@
+"""
+Module mqtt.tests.test_router_handlers
+
+Flow:
+Top-level classes:
+- DummyMsg
+- RouterHandlerInvocationTests
+"""
+
 from unittest.mock import patch
 
 from django.test import TestCase
