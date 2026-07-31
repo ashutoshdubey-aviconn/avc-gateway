@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: whdb
+      POSTGRES_USER: whuser
+      POSTGRES_PASSWORD: whpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  web:
+    build: .
+    command: gunicorn warehouse.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: whdb
+      DATABASE_USER: whuser
+      DATABASE_PASSWORD: whpass
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      DJANGO_SETTINGS_MODULE: warehouse.settings
+    depends_on:
+      - db
+      - rabbit
+
+  worker:
+    build: .
+    command: celery -A warehouse worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: whdb
+      DATABASE_USER: whuser
+      DATABASE_PASSWORD: whpass
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      DJANGO_SETTINGS_MODULE: warehouse.settings
+    depends_on:
+      - db
+      - rabbit
+
+volumes:
+  postgres_data:
