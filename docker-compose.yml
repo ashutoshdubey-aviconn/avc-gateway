@@ -30,15 +30,16 @@ services:
     ports:
       - '8000:8000'
     environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_NAME: whdb
-      DATABASE_USER: whuser
-      DATABASE_PASSWORD: whpass
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: whdb
+      DB_USER: whuser
+      DB_PASSWORD: whpass
       RABBITMQ_HOST: rabbit
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: guest
       RABBITMQ_PASS: guest
+      CELERY_BROKER_URL: 'amqp://guest:guest@rabbit:5672//'
       DJANGO_SETTINGS_MODULE: warehouse.settings
     depends_on:
       - db
@@ -50,15 +51,16 @@ services:
     volumes:
       - .:/app
     environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_NAME: whdb
-      DATABASE_USER: whuser
-      DATABASE_PASSWORD: whpass
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: whdb
+      DB_USER: whuser
+      DB_PASSWORD: whpass
       RABBITMQ_HOST: rabbit
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: guest
       RABBITMQ_PASS: guest
+      CELERY_BROKER_URL: 'amqp://guest:guest@rabbit:5672//'
       DJANGO_SETTINGS_MODULE: warehouse.settings
     depends_on:
       - db
