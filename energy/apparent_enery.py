@@ -30,6 +30,17 @@ def handle_apparent(
     message: str,
     location_id: Optional[int],
 ) -> bool:
+    """Handle apparent energy readings.
+
+    Expects topics whose `msg_type` contains 'APPARENT'. Parses the incoming
+    numeric value, computes the delta against the last stored `MeterReadings`
+    value (if present), and updates hourly/daily aggregates as well as the
+    `AisleGroup` cumulative consumption.
+
+    Returns True to indicate the message was consumed (even if the numeric
+    payload was invalid or the device was unknown), or False if the
+    handler is not applicable for this message.
+    """
     if "APPARENT" not in msg_type:
         return False
     try:

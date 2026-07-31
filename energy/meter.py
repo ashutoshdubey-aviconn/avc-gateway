@@ -34,8 +34,19 @@ def handle_meter_connection(
     message_for: str,
     msg_type: list[str],
 ) -> bool:
+    """Handle meter connection state messages.
+
+    This handler listens for simple "Connected"/"Disconnected" messages and
+    republishes them to the cloud-formatted topic (replacing localstate->state
+    and `asem` -> `Acclivate`). This prevents local state messages from being
+    reprocessed as telemetry.
+
+    Returns True when the message was handled, False to allow other handlers
+    to inspect the message.
+    """
     if message not in {"Disconnected", "Connected"}:
         return False
+
     topictosend = msg.topic.replace("localstate", "state").replace("asem", "Acclivate")
     client.publish(topictosend, message, qos=0, retain=False)
     return True
@@ -50,6 +61,20 @@ def handle_meter_energy(
     site: Site,
     current_time: datetime,
 ) -> bool:
+    """Process meter energy (wh) readings and update DB aggregates.
+
+    This handler expects `msg_type` to include the energy type marker at
+    position 6 (value '0' for energy readings). It parses the incoming
+    reading, computes delta consumption against the last recorded meter value,
+    and updates `HourlySiteReading`, `DailySiteReading`, `MeterReadings`, and
+    the `AisleGroup.cumulative_consumption` accordingly. It also publishes a
+    consumption payload to the cloud using `publish_status`.
+
+    Returns True when the message was handled (including cases where the
+    payload is invalid or device mapping is missing), False when the handler
+    should not claim the message.
+    """
+
     if len(msg_type) <= 6 or msg_type[6] != "0":
         return False
     try:
