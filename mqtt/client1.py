@@ -8,7 +8,7 @@ Top-level functions:
 
 import logging
 from logging.handlers import RotatingFileHandler
-from typing import dict
+from typing import Dict
 
 import paho.mqtt.client as mqtt
 from celery.utils.log import get_task_logger
@@ -38,7 +38,7 @@ def start_client() -> None:
     Business logic is handled in the on_message callback.
     """
 
-    def on_connect(client: mqtt.Client, userdata: object, flags: dict[str, int], rc: int) -> None:
+    def on_connect(client: mqtt.Client, userdata: object, flags: Dict[str, int], rc: int) -> None:
         """MQTT on_connect callback.
 
         Subscribes to the local telemetry prefix (`/asem/aviconn/#`) and the
