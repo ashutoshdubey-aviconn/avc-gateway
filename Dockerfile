@@ -28,4 +28,7 @@ EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["gunicorn", "warehouse.wsgi:application", "--bind", "0.0.0.0:8000"]
+# For interactive development use the Django dev server by default. In
+# production or CI use the `gunicorn` command via docker-compose override or
+# by passing a different command to `docker run` / `docker-compose`.
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
