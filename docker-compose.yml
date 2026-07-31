@@ -18,8 +18,9 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      # Remap host ports to avoid conflicts with a local RabbitMQ instance
+      - '5673:5672'
+      - '15673:15672'
 
   web:
     build: .
