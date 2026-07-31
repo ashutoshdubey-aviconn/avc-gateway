@@ -7,7 +7,7 @@ WORKDIR /app
 
 # system deps needed for common Python packages and `nc` for healthchecks
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential libpq-dev netcat \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # install python deps
