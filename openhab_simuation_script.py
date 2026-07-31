@@ -65,7 +65,7 @@ def generate_value(topic):
 def publish(topic):
     value = generate_value(topic)
     mqtt_host = os.environ.get("MQTT_HOST", "localhost")
-    mqtt_port = os.environ.get("MQTT_PORT", "5003")
+    mqtt_port = os.environ.get("MQTT_PORT", "1883")
     mqtt_topic = f"/asem/aviconn/164/avc_office_office_000164_1/out/{topic}/localstate"
     mqtt_cmd = f'mosquitto_pub -h {mqtt_host} -p {mqtt_port} -t "{mqtt_topic}" -m "{value}"'
     os.system(mqtt_cmd)
@@ -75,7 +75,7 @@ def publish(topic):
 
 def simulate():
     log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  Function START $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    start_time = timezone.now()
+    start_time = datetime.now(timezone.utc)
     log(f"function start time is :  {start_time}")
 
     def meter_block(name, topics):
@@ -88,52 +88,52 @@ def simulate():
     meter_block(
         "meter10",
         [
-            "METER_132_GF_L11_1_1_1",
-            "METER_132_GF_L11_1_1_2",
-            "METER_132_GF_L11_1_1_3",
-            "METER_132_GF_L12_1_2_1",
-            "METER_132_GF_L12_1_2_2",
-            "METER_132_GF_L12_1_2_3",
-            "METER_132_GF_L13_1_3_1",
-            "METER_132_GF_L13_1_3_2",
-            "METER_132_GF_L13_1_3_3",
+            "METER_164_GF_L11_1_1_1",
+            "METER_164_GF_L11_1_1_2",
+            "METER_164_GF_L11_1_1_3",
+            "METER_164_GF_L12_1_2_1",
+            "METER_164_GF_L12_1_2_2",
+            "METER_164_GF_L12_1_2_3",
+            "METER_164_GF_L13_1_3_1",
+            "METER_164_GF_L13_1_3_2",
+            "METER_164_GF_L13_1_3_3",
             "TOTAL_LOAD_WATTAGE_1",
         ],
     )
 
     meter_block("meter11", ["SUPPLY_SOURCE_1"])
     meter_block("meter12", ["SUPPLY_MAINS_LOAD_TIME_1_1"])
-    meter_block("meter13", ["METER_132_GF_L11_1_1_0", "SUPPLY_MAINS_APPARENT_ENERGY_1"])
+    meter_block("meter13", ["METER_164_GF_L11_1_1_0", "SUPPLY_MAINS_APPARENT_ENERGY_1"])
     meter_block(
         "meter14",
-        ["METER_132_GF_L11_1_1_4", "METER_132_GF_L12_1_2_4", "METER_132_GF_L13_1_3_4"],
+        ["METER_164_GF_L11_1_1_4", "METER_164_GF_L12_1_2_4", "METER_164_GF_L13_1_3_4"],
     )
 
     meter_block(
         "meter20",
         [
-            "METER_132_GF_L14_2_1_1",
-            "METER_132_GF_L14_2_1_2",
-            "METER_132_GF_L14_2_1_3",
-            "METER_132_GF_L15_2_2_1",
-            "METER_132_GF_L15_2_2_2",
-            "METER_132_GF_L15_2_2_3",
-            "METER_132_GF_L16_2_3_1",
-            "METER_132_GF_L16_2_3_2",
-            "METER_132_GF_L16_2_3_3",
+            "METER_164_GF_L14_2_1_1",
+            "METER_164_GF_L14_2_1_2",
+            "METER_164_GF_L14_2_1_3",
+            "METER_164_GF_L15_2_2_1",
+            "METER_164_GF_L15_2_2_2",
+            "METER_164_GF_L15_2_2_3",
+            "METER_164_GF_L16_2_3_1",
+            "METER_164_GF_L16_2_3_2",
+            "METER_164_GF_L16_2_3_3",
             "TOTAL_LOAD_WATTAGE_2",
         ],
     )
 
     meter_block("meter21", ["SUPPLY_SOURCE_2"])
     meter_block("meter22", ["DG_1_LOAD_TIME_2_2"])
-    meter_block("meter23", ["METER_132_GF_L14_2_1_0", "DG_1_APPARENT_ENERGY_2"])
+    meter_block("meter23", ["METER_164_GF_L14_2_1_0", "DG_1_APPARENT_ENERGY_2"])
     meter_block(
         "meter24",
-        ["METER_132_GF_L14_2_1_4", "METER_132_GF_L15_2_2_4", "METER_132_GF_L16_2_3_4"],
+        ["METER_164_GF_L14_2_1_4", "METER_164_GF_L15_2_2_4", "METER_164_GF_L16_2_3_4"],
     )
 
-    end_time = timezone.now()
+    end_time = datetime.now(timezone.utc)
     log(f"function end time is :  {end_time}")
     log(f"total time taken in seconds is  :  {(end_time - start_time).total_seconds()}")
     log("#############################  Function END #######################################")

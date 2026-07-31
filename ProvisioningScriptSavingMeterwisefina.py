@@ -188,7 +188,7 @@ def map_topics_to_aisle_by_name(topic_aisle_pairs: list):
 def fetch_db_aisle_names() -> set:
     try:
         site_pk = fetch_site_id()
-        from warehouse.wareApp.models import AisleGroup as _AG
+        from wareApp.models import AisleGroup as _AG
 
         qs = _AG.objects.filter(site_id=site_pk).values_list("aisleGroupName", flat=True)
         result = {(n or "").strip().lower() for n in qs if n}

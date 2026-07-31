@@ -24,7 +24,7 @@ from datetime import time
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -39,7 +39,9 @@ from .models import (
     Site,
     SmartEnergyDevices,
 )
-from .models import User as LocalUser
+
+# Use Django's configured user model (may be swapped)
+UserModel = get_user_model()
 
 # from warehouse.wareApp import sendmail
 from .serializers import LoginSerializer, TokenSerializer, UserSerializer
@@ -50,8 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    User = get_user_model()
-    queryset = User.objects.all().order_by("-date_joined")
+    queryset = UserModel.objects.all().order_by("-date_joined")
     # serializer_class = UserSerializer
 
 
@@ -94,15 +95,32 @@ def entryExit(aFunc):
 
 
 def create_customer(data):
-    user = User.objects.create(
-        username=data["customer_name"],
-        email=data["customer_email"],
-        password=make_password("Aviconn@123#"),
-        UserType=4,
-        Contact_number=data["customer_contact"],
-        id=data["id"],
-    )
-    customer = CustomerInfo.objects.create(customer=user)
+    # Ensure we have a non-empty username; fall back to email or generated name
+    username = data.get("customer_name") or data.get("customer_email") or f"customer_{data.get('id')}"
+    email = data.get("customer_email") or ""
+    contact = data.get("customer_contact") or ""
+    # Use create_user to ensure password hashing and proper defaults
+    try:
+        user = UserModel.objects.create_user(
+            username=username,
+            email=email,
+            password="Aviconn@123#",
+            id=data.get("id"),
+        )
+    except Exception:
+        # Last-resort: try creating without id (maybe PK conflict), then update fields
+        user = UserModel.objects.create_user(username=username, email=email, password="Aviconn@123#")
+    # set additional fields if present on the model
+    try:
+        if hasattr(user, "UserType"):
+            setattr(user, "UserType", 4)
+        if hasattr(user, "Contact_number"):
+            setattr(user, "Contact_number", contact)
+        user.save()
+    except Exception:
+        logger.exception("Failed to set extra user fields for %s", username)
+
+    CustomerInfo.objects.create(customer=user)
     return user.id
 
 
@@ -116,7 +134,7 @@ def create_newCustomer(APIView):
         email = data.get("customer_email")
         contact = data.get("customer_contact")
         currentdate = timezone.now()
-        user = User.objects.create(
+        user = UserModel.objects.create(
             id=customer_id,
             username=username,
             password=make_password(password),
@@ -130,7 +148,7 @@ def create_newCustomer(APIView):
 
 
 def create_site(data):
-    customer = User.objects.get(id=data["customer_id"])
+    customer = UserModel.objects.get(id=data["customer_id"])
     site = Site.objects.create(
         customer=customer,
         site_name=data["site_name"],

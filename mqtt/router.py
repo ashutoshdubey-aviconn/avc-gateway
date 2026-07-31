@@ -49,6 +49,8 @@ def route_message(client: mqtt.Client, msg: mqtt.MQTTMessage) -> None:
         return
 
     parsed = parse_mqtt_topic(msg.topic)
+    # Add debug log showing parsed topic structure for runtime validation
+    logger.debug("Parsed MQTT topic: %s -> %s", msg.topic, parsed)
     msg_type = parsed.get("msg_type", [])
     msg_subtype = parsed.get("msg_subtype")
     message_for = parsed.get("message_for")
