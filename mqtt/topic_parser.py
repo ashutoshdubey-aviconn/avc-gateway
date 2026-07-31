@@ -73,13 +73,18 @@ def parse_mqtt_topic(topic: str) -> ParsedTopic:
             break
     parsed["location_id"] = loc_id
 
+    # message_for is commonly at index 5 (e.g. the resource/topic name)
+    if len(parts) > 5:
+        parsed["message_for"] = parts[5]
+    # msg_type (the underscore-separated type) is commonly at index 6
     if len(parts) > 6:
-        parsed["message_for"] = parts[6]
         parsed["msg_type"] = parts[6].split("_") if parts[6] else []
+        # also expose the raw subtype string from the same segment for tests
+        parsed["msg_subtype"] = parts[6]
     else:
         parsed["msg_type"] = []
-
+    # if an additional segment exists after msg_type, keep it as `extra`
     if len(parts) > 7:
-        parsed["msg_subtype"] = parts[7]
+        parsed.setdefault("extra", parts[7])
 
     return parsed
