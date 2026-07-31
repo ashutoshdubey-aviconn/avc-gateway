@@ -6,7 +6,7 @@ Top-level functions:
 - start_client
 """
 
-from typing import dict
+from typing import Dict
 
 import paho.mqtt.client as mqtt
 from celery.utils.log import get_task_logger
@@ -18,7 +18,7 @@ logger = get_task_logger(__name__)
 
 
 def start_client() -> None:
-    def on_connect(client: mqtt.Client, userdata: object, flags: dict[str, int], rc: int) -> None:
+    def on_connect(client: mqtt.Client, userdata: object, flags: Dict[str, int], rc: int) -> None:
         """MQTT on_connect callback for client2.
 
         Subscribes to control topics published under the `Acclivate` prefix.
