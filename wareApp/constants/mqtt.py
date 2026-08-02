@@ -1,0 +1,9 @@
+"""
+Migrated constants.mqtt
+"""
+
+BROKER_HOST = "127.0.0.1"
+BROKER_PORT = 1883
+BROKER_KEEPALIVE = 60
+CLIENT1_ID = "paho_client_1"
+CLIENT2_ID = "paho_client_2"

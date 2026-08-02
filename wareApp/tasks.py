@@ -10,8 +10,8 @@ Top-level functions:
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from mqtt.client1 import start_client as start_client1
-from mqtt.client2 import start_client as start_client2
+from wareApp.mqtt.client1 import start_client as start_client1
+from wareApp.mqtt.client2 import start_client as start_client2
 
 logger = get_task_logger(__name__)
 

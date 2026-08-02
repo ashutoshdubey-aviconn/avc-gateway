@@ -699,10 +699,20 @@ def mosquitto_conf(siteId, hgwId):
     """Configure Mosquitto with site ID and home gateway ID"""
     try:
         file_path = "/etc/mosquitto/mosquitto.conf"
-        command = f"echo odroid | sudo -S sed -i 's/siteId/{siteId}/g' {file_path}"
-        command1 = f"echo odroid | sudo -S sed -i 's/hgwId/{hgwId}/g' {file_path}"
-        os.system(command)
-        os.system(command1)
+        import shutil
+
+        backup = file_path + ".bak"
+        try:
+            shutil.copyfile(file_path, backup)
+        except Exception:
+            pass
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = f.read()
+        data = data.replace("siteId", str(siteId)).replace("hgwId", str(hgwId))
+        tmp = file_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(data)
+        subprocess.run(["mv", tmp, file_path], check=True)
         print("Mosquitto configuration updated successfully.")
         return
     except Exception as e:
@@ -735,12 +745,20 @@ def network_conf(wpa_ssid, wpa_psk):
         file_path = "/etc/network/interfaces"
         wpa_ssid_line = "wpa-ssid " + wpa_ssid
         wpa_psk_line = "wpa-psk  " + wpa_psk
-        command = f"echo odroid | sudo -S sed -i 's/wpa-ssid Aviconn/{wpa_ssid_line}/g' {file_path}"
-        command1 = f"echo odroid | sudo -S sed -i 's/wpa-psk  Aviconn@32/{wpa_psk_line}/g' {file_path}"
-        import os
+        import shutil
 
-        os.system(command)
-        os.system(command1)
+        backup = file_path + ".bak"
+        try:
+            shutil.copyfile(file_path, backup)
+        except Exception:
+            pass
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = f.read()
+        data = data.replace("wpa-ssid Aviconn", wpa_ssid_line).replace("wpa-psk  Aviconn@32", wpa_psk_line)
+        tmp = file_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(data)
+        subprocess.run(["mv", tmp, file_path], check=True)
         print("Network manager configuration updated successfully.")
     except Exception as e:
         print(f"Error updating network configuration: {e}")

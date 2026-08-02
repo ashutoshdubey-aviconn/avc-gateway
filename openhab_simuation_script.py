@@ -67,8 +67,29 @@ def publish(topic):
     mqtt_host = os.environ.get("MQTT_HOST", "localhost")
     mqtt_port = os.environ.get("MQTT_PORT", "1883")
     mqtt_topic = f"/asem/aviconn/164/avc_office_office_000164_1/out/{topic}/localstate"
-    mqtt_cmd = f'mosquitto_pub -h {mqtt_host} -p {mqtt_port} -t "{mqtt_topic}" -m "{value}"'
-    os.system(mqtt_cmd)
+    # use subprocess without shell to avoid injection; rely on mosquitto_pub binary in PATH
+    import shlex
+    import subprocess
+
+    mqtt_cmd = [
+        "mosquitto_pub",
+        "-h",
+        str(mqtt_host),
+        "-p",
+        str(mqtt_port),
+        "-t",
+        mqtt_topic,
+        "-m",
+        str(value),
+    ]
+    try:
+        subprocess.run(mqtt_cmd, check=True)
+    except Exception:
+        logger = globals().get("logger")
+        if logger:
+            logger.exception("Failed to publish MQTT for topic %s", mqtt_topic)
+        else:
+            print(f"Failed to publish MQTT for topic {mqtt_topic}")
     # subprocess.call(mqtt_cmd, shell=True)
     log(f"Published to {topic} with value: {value}")
 

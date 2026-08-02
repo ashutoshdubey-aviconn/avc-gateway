@@ -10,9 +10,9 @@ from unittest.mock import Mock, patch
 
 from django.test import TestCase
 
-from gateway import recovery
-from mqtt.router import route_message
-from mqtt.topic_parser import normalize_payload, parse_mqtt_topic
+from wareApp.gateway import recovery
+from wareApp.mqtt.router import route_message
+from wareApp.mqtt.topic_parser import normalize_payload, parse_mqtt_topic
 
 
 class RouterRecoveryTests(TestCase):

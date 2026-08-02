@@ -704,49 +704,75 @@ def save_to_wave_item_whtm_csv(string):
 
 def mosquitto_conf(siteId, hgwId):
     filePath = "/etc/mosquitto/mosquitto.conf"
-    command = "echo odroid | sudo -S sed -i 's/siteId/{}/g' {}".format(siteId, filePath)
-    command1 = "echo odroid | sudo -S sed -i 's/hgwId/{}/g' {}".format(hgwId, filePath)
-    import os
+    import shutil
 
-    os.system(command)
-    os.system(command1)
+    try:
+        backup = filePath + ".bak"
+        shutil.copyfile(filePath, backup)
+    except Exception:
+        pass
+    try:
+        with open(filePath, "r", encoding="utf-8") as f:
+            data = f.read()
+        data = data.replace("siteId", str(siteId)).replace("hgwId", str(hgwId))
+        tmp = filePath + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(data)
+        subprocess.run(["mv", tmp, filePath], check=True)
+    except Exception:
+        logger.exception("Failed to update %s", filePath)
     return
 
 
 def reverse_ssh_conf(rssh_port, monitoring_port):
-    fin = open("/home/odroid/gateway-latest-code/autossh.sh", "rt")
-    data = fin.read()
-    data = data.replace("$rPort", rssh_port).replace("$mPort", monitoring_port)
-    fin.close()
-    fin = open("/home/odroid/gateway-latest-code/autossh.sh", "wt")
-    fin.write(data)
-    fin.close()
+    path = "/home/odroid/gateway-latest-code/autossh.sh"
+    try:
+        with open(path, "r", encoding="utf-8") as fin:
+            data = fin.read()
+        data = data.replace("$rPort", str(rssh_port)).replace(
+            "$mPort", str(monitoring_port)
+        )
+        with open(path, "w", encoding="utf-8") as fout:
+            fout.write(data)
+    except Exception:
+        logger.exception("Failed to update autossh script at %s", path)
 
 
 def pymodbus_conf(siteId, hgwId):
-    fin = open("/home/odroid/pymodbus/openhab_script.py", "rt")
-    data = fin.read()
-    data = data.replace("$siteId", siteId).replace("$hgwId", hgwId)
-    fin.close()
-    fin = open("/home/odroid/pymodbus/openhab_script.py", "wt")
-    fin.write(data)
-    fin.close()
+    path = "/home/odroid/pymodbus/openhab_script.py"
+    try:
+        with open(path, "r", encoding="utf-8") as fin:
+            data = fin.read()
+        data = data.replace("$siteId", str(siteId)).replace("$hgwId", str(hgwId))
+        with open(path, "w", encoding="utf-8") as fout:
+            fout.write(data)
+    except Exception:
+        logger.exception("Failed to update pymodbus openhab script at %s", path)
 
 
 def network_conf(wpa_ssid, wpa_psk):
     filePath = "/etc/network/interfaces"
     wpa_ssid = "wpa-ssid " + wpa_ssid
     wpa_psk = "wpa-psk  " + wpa_psk
-    command = "echo odroid | sudo -S sed -i 's/wpa-ssid Aviconn/{}/g' {}".format(
-        wpa_ssid, filePath
-    )
-    command1 = "echo odroid | sudo -S sed -i 's/wpa-psk  Aviconn@32/{}/g' {}".format(
-        wpa_psk, filePath
-    )
-    import os
+    import shutil
 
-    os.system(command)
-    os.system(command1)
+    try:
+        backup = filePath + ".bak"
+        shutil.copyfile(filePath, backup)
+    except Exception:
+        pass
+    try:
+        with open(filePath, "r", encoding="utf-8") as f:
+            data = f.read()
+        data = data.replace("wpa-ssid Aviconn", wpa_ssid).replace(
+            "wpa-psk  Aviconn@32", wpa_psk
+        )
+        tmp = filePath + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(data)
+        subprocess.run(["mv", tmp, filePath], check=True)
+    except Exception:
+        logger.exception("Failed to update network config %s", filePath)
     return
 
 
