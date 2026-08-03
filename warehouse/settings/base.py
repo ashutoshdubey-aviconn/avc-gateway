@@ -19,7 +19,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="127.0.0.1,localhost",
+    default="127.0.0.1,localhost,0.0.0.0",
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
 
@@ -115,6 +115,8 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_ENABLE_UTC = False
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
 
 LOGGING = {
     "version": 1,
@@ -129,18 +131,91 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "standard",
             "level": "INFO",
-        }
+        },
+        "gateway_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "gateway.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "celery_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "celery.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "mqtt_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "mqtt.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "recovery_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "recovery.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "modbus_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "modbus.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
+        "system_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "level": "INFO",
+            "filename": os.path.join(LOG_DIR, "system.log"),
+            "maxBytes": 5 * 1024 * 1024,
+            "backupCount": 5,
+        },
     },
     "loggers": {
         "": {  # root logger
-            "handlers": ["console"],
+            "handlers": ["console", "system_file"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
+        },
+        "django": {
+            "handlers": ["console", "system_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "wareApp.gateway": {
+            "handlers": ["console", "gateway_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "wareApp.mqtt": {
+            "handlers": ["console", "mqtt_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "wareApp.gateway.recovery": {
+            "handlers": ["console", "recovery_file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "wareApp.modbus": {
+            "handlers": ["console", "modbus_file"],
+            "level": "INFO",
+            "propagate": False,
         },
         "celery": {
-            "handlers": ["console"],
+            "handlers": ["console", "celery_file"],
             "level": "INFO",
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
