@@ -1,4 +1,5 @@
 """Settings for integration tests using Postgres/RabbitMQ/Mosquitto provided by CI."""
+
 import os
 
 from .settings import *  # noqa: F401,F403
@@ -20,7 +21,8 @@ DATABASES = {
 
 # Prefer an explicit broker url if provided by CI
 CELERY_BROKER_URL = os.environ.get(
-    "CELERY_BROKER_URL", os.environ.get("RABBITMQ_URL", "amqp://guest:guest@localhost:5672//")
+    "CELERY_BROKER_URL",
+    os.environ.get("RABBITMQ_URL", "amqp://guest:guest@localhost:5672//"),
 )
 """Integration settings: derive from main settings and override DB for CI/docker-compose."""
 
