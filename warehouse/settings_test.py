@@ -1,3 +1,29 @@
+"""Settings used for fast unit tests (SQLite, eager Celery)."""
+import os
+
+from .settings import *  # noqa: F401,F403
+
+# Keep a stable secret for CI tests if not provided
+SECRET_KEY = os.environ.get("SECRET_KEY", "test-secret-key")
+DEBUG = True
+
+# Use in-memory SQLite to keep unit tests fast and isolated
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+    }
+}
+
+# Speed up password hashing for tests
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Run Celery tasks synchronously during tests
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
+# Use local memory email backend
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 """
 Module warehouse.settings_test
 
