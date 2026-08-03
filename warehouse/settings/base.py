@@ -1,4 +1,5 @@
 """Base settings shared across environments."""
+
 import logging
 import os
 
@@ -10,11 +11,18 @@ logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="unsafe-dev-key-change-in-production",
+)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", default=False)
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost",
+    cast=lambda v: [s.strip() for s in v.split(",")],
+)
 
-ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS = [
@@ -84,8 +92,16 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-STATIC_URL = "/warehouse/static/"
-STATIC_ROOT = os.path.join(os.path.join(BASE_DIR, "warehouse/static/"))
+# Use standard Django static settings. Serve static files at `/static/`.
+# Put collected static files in a top-level `staticfiles/` directory and also
+# include the repository `static/` folder in `STATICFILES_DIRS` so vendor
+# assets and admin files are discovered by `collectstatic`.
+STATIC_URL = "/static/"
+# PROJECT_ROOT is the repository root (one level above the `warehouse` package)
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles")
+# Additional locations the staticfiles app will traverse
+STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, "static")]
 
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
