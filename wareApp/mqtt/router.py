@@ -4,6 +4,7 @@ This file provides `route_message` and re-exports the meter handlers from
 `wareApp.energy.meter` so unit tests can patch them on the `wareApp.mqtt.router`
 module.
 """
+
 import logging
 from datetime import datetime
 

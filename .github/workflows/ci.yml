@@ -12,7 +12,9 @@ on:
 
 env:
   PYTHON_VERSION: "3.10"
-  DJANGO_SETTINGS_MODULE: warehouse.settings_test
+  # Use the settings loader in warehouse.settings and select environment
+  # via DJANGO_ENV (production|development|test|integration)
+  DJANGO_ENV: test
 
 jobs:
   ci:
@@ -137,7 +139,7 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     env:
-      DJANGO_SETTINGS_MODULE: warehouse.settings_integration
+      DJANGO_ENV: integration
 
     services:
       postgres:
