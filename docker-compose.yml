@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: whdb
+      POSTGRES_USER: whuser
+      POSTGRES_PASSWORD: whpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      # Remap host ports to avoid conflicts with a local RabbitMQ instance
+      - '5673:5672'
+      - '15673:15672'
+
+  web:
+    build: .
+    command: gunicorn warehouse.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: whdb
+      DB_USER: whuser
+      DB_PASSWORD: whpass
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      CELERY_BROKER_URL: 'amqp://guest:guest@rabbit:5672//'
+      DJANGO_SETTINGS_MODULE: warehouse.settings
+    depends_on:
+      - db
+      - rabbit
+
+  worker:
+    build: .
+    command: celery -A warehouse worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: whdb
+      DB_USER: whuser
+      DB_PASSWORD: whpass
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      CELERY_BROKER_URL: 'amqp://guest:guest@rabbit:5672//'
+      DJANGO_SETTINGS_MODULE: warehouse.settings
+    depends_on:
+      - db
+      - rabbit
+
+volumes:
+  postgres_data:

@@ -1,0 +1,224 @@
+name: Gateway CI
+
+on:
+  push:
+    branches:
+      - development
+      - main
+  pull_request:
+    branches:
+      - development
+      - main
+
+env:
+  PYTHON_VERSION: "3.10"
+  # Use the settings loader in warehouse.settings and select environment
+  # via DJANGO_ENV (production|development|test|integration)
+  DJANGO_ENV: test
+
+jobs:
+  ci:
+    name: Code Quality & Unit Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: warehouse
+          POSTGRES_USER: aviconn
+          POSTGRES_PASSWORD: whpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aviconn -d warehouse"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install System Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+          pip install \
+            black \
+            isort \
+            ruff \
+            pre-commit \
+            coverage
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready \
+              -h localhost \
+              -p 5432 \
+              -U aviconn \
+              -d warehouse && break
+            sleep 2
+          done
+
+      - name: Run Pre-Commit
+        run: |
+          pre-commit run --all-files
+
+      - name: Black Formatting Check
+        run: |
+          black --check .
+
+      - name: isort Import Check
+        run: |
+          isort --check-only .
+
+      - name: Ruff Lint
+        run: |
+          ruff check .
+
+      - name: Django System Check
+        env:
+          SECRET_KEY: ci-secret-key
+          DEBUG: "True"
+          DB_NAME: warehouse
+          DB_USER: aviconn
+          DB_PASSWORD: whpass
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+        run: |
+          python manage.py check
+
+      - name: Run Migrations
+        env:
+          SECRET_KEY: ci-secret-key
+          DEBUG: "True"
+          DB_NAME: warehouse
+          DB_USER: aviconn
+          DB_PASSWORD: whpass
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+        run: |
+          python manage.py migrate --noinput
+
+      - name: Run Unit Tests
+        env:
+          SECRET_KEY: ci-secret-key
+          DEBUG: "True"
+          DB_NAME: warehouse
+          DB_USER: aviconn
+          DB_PASSWORD: whpass
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+        run: |
+          coverage run manage.py test --verbosity=2
+          coverage report
+          coverage xml
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  integration:
+    name: Integration Tests
+    needs: ci
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_ENV: integration
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: warehouse
+          POSTGRES_USER: aviconn
+          POSTGRES_PASSWORD: whpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aviconn -d warehouse"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+
+      mosquitto:
+        image: eclipse-mosquitto:2
+        ports:
+          - 1883:1883
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install System Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready \
+              -h localhost \
+              -p 5432 \
+              -U aviconn \
+              -d warehouse && break
+            sleep 2
+          done
+
+      - name: Run Database Migrations
+        env:
+          SECRET_KEY: ci-secret-key
+          DEBUG: "True"
+          DB_NAME: warehouse
+          DB_USER: aviconn
+          DB_PASSWORD: whpass
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: |
+          python manage.py migrate --noinput
+
+      - name: Run Integration Tests
+        env:
+          SECRET_KEY: ci-secret-key
+          DEBUG: "True"
+          DB_NAME: warehouse
+          DB_USER: aviconn
+          DB_PASSWORD: whpass
+          DB_HOST: localhost
+          DB_PORT: 5432
+          RABBITMQ_HOST: localhost
+          MQTT_HOST: localhost
+        run: |
+          python manage.py test tests --verbosity=2

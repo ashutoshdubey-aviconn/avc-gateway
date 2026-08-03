@@ -1,9 +1,28 @@
+"""
+Module wareApp.serializers
+
+Flow:
+Top-level classes:
+- TokenSerializer
+- LoginSerializer
+- UserSerializer
+- UserCustomerInfoSerializer
+- CustomerInfoSerializer
+- CustomerWarehouseDetailSerializer
+- SiteSerializer
+"""
+
+import base64
+import logging
+
+from django.contrib.auth import authenticate
 from django.core import exceptions
 from rest_framework import serializers
-from .models import User, CustomerInfo, Site
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-import base64
+
+from .models import CustomerInfo, Site, User
+
+logger = logging.getLogger(__name__)
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -17,22 +36,22 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, data):
-        print("dataa")
+        logger.debug("Login data received")
         username = data.get("username", "")
         password = base64.b64decode(data.get("password", ""))
-        print(password)
+        logger.debug("Decoded password length=%d", len(password) if password else 0)
 
         if username and password:
             user = authenticate(username=username, password=password)
-            print("user", user)
+            logger.debug("Authenticated user=%s", user)
             if user:
                 data["user"] = user
             else:
-                print('user authentication fails')
-                msg = 'invalid credentials. try again'
+                logger.info("User authentication fails for username=%s", username)
+                msg = "invalid credentials. try again"
                 return exceptions.ValidationError(msg)
         else:
-            print('username & password doesnt exist')
+            logger.info("username & password missing in request")
             msg = "invalid data"
             return exceptions.ValidationError(msg)
 
@@ -43,18 +62,31 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email", "UserType", "first_name", "last_name", "Contact_number"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "UserType",
+            "first_name",
+            "last_name",
+            "Contact_number",
+        ]
 
 
 class UserCustomerInfoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
-        fields = ["id", "username", "email", "Contact_number", "first_name", "last_name"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "Contact_number",
+            "first_name",
+            "last_name",
+        ]
 
 
 class CustomerInfoSerializer(serializers.ModelSerializer):
-
     customer = UserCustomerInfoSerializer(many=False, read_only=True)
 
     class Meta:
@@ -63,28 +95,27 @@ class CustomerInfoSerializer(serializers.ModelSerializer):
 
 
 class CustomerWarehouseDetailSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Site
         fields = ["id", "site_name", "site_manager_number"]
 
 
 class SiteSerializer(serializers.ModelSerializer):
-
     site_manager = UserSerializer(many=False, read_only=True)
 
     class Meta:
         model = Site
-        fields = ["site_name",
-                  "total_no_of_blocks",
-                  "total_no_of_aisles",
-                  "location",
-                  "no_of_single_source_meters",
-                  "no_of_dual_source_meters",
-                  "site_manager",
-                  "site_type",
-                  "id", ]
-
+        fields = [
+            "site_name",
+            "total_no_of_blocks",
+            "total_no_of_aisles",
+            "location",
+            "no_of_single_source_meters",
+            "no_of_dual_source_meters",
+            "site_manager",
+            "site_type",
+            "id",
+        ]
 
 
 # class ParticularCustomerInfoSerializer(serializers.ModelSerializer):

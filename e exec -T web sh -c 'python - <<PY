@@ -1,0 +1,41 @@
+                     List of tables
+ Schema |             Name              | Type  | Owner  
+--------+-------------------------------+-------+--------
+ public | auth_group                    | table | whuser
+ public | auth_group_permissions        | table | whuser
+ public | auth_permission               | table | whuser
+ public | authtoken_token               | table | whuser
+ public | django_admin_log              | table | whuser
+ public | django_content_type           | table | whuser
+ public | django_migrations             | table | whuser
+ public | django_session                | table | whuser
+ public | wareApp_aislegroup            | table | whuser
+ public | wareApp_aislegroup_block_id   | table | whuser
+ public | wareApp_aislegroup_floor      | table | whuser
+ public | wareApp_aislegroup_panel      | table | whuser
+ public | wareApp_aisleinfo             | table | whuser
+ public | wareApp_alarmnotifications    | table | whuser
+ public | wareApp_blockinfo             | table | whuser
+ public | wareApp_customerinfo          | table | whuser
+ public | wareApp_dailysitereading      | table | whuser
+ public | wareApp_floor                 | table | whuser
+ public | wareApp_homegatewayid         | table | whuser
+ public | wareApp_hourlysitereading     | table | whuser
+ public | wareApp_image                 | table | whuser
+ public | wareApp_loaddata              | table | whuser
+ public | wareApp_meterreadings         | table | whuser
+ public | wareApp_metersource           | table | whuser
+ public | wareApp_monthlyenergysaving   | table | whuser
+ public | wareApp_otp                   | table | whuser
+ public | wareApp_panel                 | table | whuser
+ public | wareApp_sensordata            | table | whuser
+ public | wareApp_site                  | table | whuser
+ public | wareApp_siteloadpower         | table | whuser
+ public | wareApp_sitestaticdata        | table | whuser
+ public | wareApp_smartenergydevices    | table | whuser
+ public | wareApp_supplyloadtimeshare   | table | whuser
+ public | wareApp_user                  | table | whuser
+ public | wareApp_user_groups           | table | whuser
+ public | wareApp_user_user_permissions | table | whuser
+(36 rows)
+

@@ -1,0 +1,12 @@
+version: '3.8'
+
+# Override useful for local development: run the Django dev server instead of
+# Gunicorn and enable more verbose worker logging.
+services:
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DEBUG: '1'
+
+  worker:
+    command: celery -A warehouse worker --loglevel=debug
